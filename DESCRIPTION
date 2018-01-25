@@ -7,3 +7,14 @@ Depends: R (>= 3.4.3)
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
+Imports: bookdown,
+    devtools (>= 1.13.4),
+    ggrepel (>= 0.7.2),
+    git2r (>= 0.20.0),
+    glue (>= 1.2.0),
+    here (>= 0.1),
+    knitr (>= 1.18),
+    readr (>= 1.1.1),
+    textrank (>= 0.2.0),
+    tidytext (>= 0.1.5),
+    tidyverse (>= 1.2.1)
