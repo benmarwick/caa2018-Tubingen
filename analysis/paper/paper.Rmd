@@ -34,6 +34,9 @@ knitr::opts_chunk$set(
 )
 
 library(caa2018) # Or use devtools::load_all('.', quiet = T) if your code is in script files, rather than as functions in the `/R` diretory
+
+library(ggrepel)
+library(tidyverse)
 ```
 
 ## Introduction
@@ -49,8 +52,6 @@ Data are from an 'advanced search' of apps.webofknowledge.com using WC=Archaeolo
 For 2017 only:
 
 ```{r}
-library(tidyverse)
-
 wc_archaeology_2017 <- 
   readr::read_tsv(paste0(here::here(), "/analysis/data/raw_data/savedrecs.txt"), 
             quote = "")
@@ -92,7 +93,6 @@ wc_archaeology_2007_to_2017 %>%
   filter(n >= 50) %>% 
   ungroup()
 
-library(ggrepel)
 ggplot(most_popular_journals_over_time,
        aes(PY, 
            n,
@@ -117,14 +117,21 @@ ggplot(most_popular_journals_over_time,
 
 We wanted to to see how R Core is cited in scientific literature in general, and in archaeology in particular.
 
-We did a 'Cited Reference Search' in WoS for title "R: A Language and Environment for Statistical Computing" and author = "R Core Team", which is the output from  `citation()`
+We did a 'Cited Reference Search' in WoS for title "R: A Language and Environment for Statistical Computing" and author = "R Core Team", which is the output from  `citation()`. This function first appeared in 2004 https://github.com/wch/r-source/commits/9a5c086855d2e8fb07f670e3315871b2de31a4fd/src/library/base/inst/CITATION 
+
+Note that before 2012 the authors were "R Development Core Team", and then it was simplified to "R Core Team" https://github.com/wch/r-source/commit/9a5c086855d2e8fb07f670e3315871b2de31a4fd#diff-80bb8a8b133a6204e9642d76791927e2
+
+This is our exact search string for WoS:
+
+You searched for: CITED AUTHOR: ("R DEV COR TEAM" OR "R CORE" OR "R CORE TEAM") AND CITED WORK: ("R: A Language and Environment for Statistical Computing") AND LANGUAGE: (English) AND DOCUMENT TYPES: (Article)
+Timespan: All years. Indexes: SCI-EXPANDED, SSCI, A&HCI, ESCI.
 
 For all scientific journals tracked by the WoS:
 
 ```{r}
 
 cran_cites_files <- 
-    paste0(here::here(), glue("/analysis/data/raw_data/savedrecs ({3:11}).txt"))
+    paste0(here::here(), glue("/analysis/data/raw_data/cited_cran/savedrecs ({1:11}).txt"))
 ```
 
 ```{r fig.height=10}
@@ -133,7 +140,9 @@ cran_cites_all_areas_all_years <-
       ~readr::read_tsv(.x, 
                        quote = "",
                        col_types = cols(.default = col_character()))) %>% 
-  bind_rows()
+  bind_rows() %>% 
+  mutate(PY = as.numeric(PY)) %>% 
+  filter(PY <= 2017)
 
 # limit to top journals
 top_journals_for_cran_cites <- 
@@ -147,9 +156,7 @@ cran_cites_all_areas_top_journals_by_year <-
   filter(SO %in% top_journals_for_cran_cites$SO[1:10]) %>% 
   group_by(SO, PY) %>% 
   tally(sort = TRUE) %>% 
-  ungroup() %>% 
-  mutate(PY = as.numeric(PY))
-
+  ungroup() 
 
 ggplot(cran_cites_all_areas_top_journals_by_year,
        aes(PY,
@@ -159,8 +166,9 @@ ggplot(cran_cites_all_areas_top_journals_by_year,
   geom_text_repel(
     data = subset(cran_cites_all_areas_top_journals_by_year, 
                   PY == max(PY)),
-    aes(label = SO),
+    aes(label = str_wrap(SO, 15)),
     size = 3,
+    direction = "both",
     nudge_x = 1,
     segment.color = NA
   ) +
@@ -194,12 +202,12 @@ ggplot(cran_cites_in_archy_journals_per_year,
   geom_text_repel(
     data = subset(cran_cites_in_archy_journals_per_year, 
                   PY == max(PY)),
-    aes(label = SO),
+    aes(label = str_wrap(SO, 10)),
     size = 3,
     nudge_x = 1,
     segment.color = NA
   ) +
-  xlim(2007, 2018) +
+  xlim(2007, 2019) +
   theme_minimal() +
   theme(legend.position="none") +
   ggtitle("Number of Archaeology articles per year citing R Core",
@@ -212,45 +220,90 @@ ggplot(cran_cites_in_archy_journals_per_year,
 What are the key words in the titles of these archaeology articles that cite R Core, and how do they differ from other archaeology articles?
 
 
-```{r eval = FALSE}
+```{r}
 library(tidytext)
+# https://www.tidytextmining.com/twitter.html
 
-cran_cites_in_archy_journals %>% 
-  select(TI) %>% 
-  unnest_tokens(word, TI) %>% 
-  anti_join(stop_words) %>%
+# These are all archy articles
+# wc_archaeology_2007_to_2017
+
+# These are ones citing R
+# cran_cites_in_archy_journals
+
+# subtract ones citing R from ones that do not
+library(Hmisc)
+wc_archaeology_2007_to_2017_no_R_cites <- 
+  wc_archaeology_2007_to_2017 %>% 
+  filter(TI %nin% cran_cites_in_archy_journals$TI)
+
+# combine
+archy_journal_articles <- 
+  bind_rows(wc_archaeology_2007_to_2017_no_R_cites %>% 
+            mutate(ID = "no_R_cites",
+                   VL = as.character(VL)),
+           cran_cites_in_archy_journals %>% 
+            mutate(ID = "has_R_cites"))
+
+library(tidytext)
+library(stringr)
+
+tidy_cites <- 
+archy_journal_articles %>% 
+  unnest_tokens(word, TI) %>%
+  filter(!word %in% stop_words$word,
+         str_detect(word, "[a-z]"))
+
+frequency <- 
+  tidy_cites %>% 
+  group_by(ID) %>% 
   count(word, sort = TRUE) %>% 
-  head(20)
+  left_join(tidy_cites %>% 
+              group_by(ID) %>% 
+              summarise(total = n())) %>%
+  mutate(freq = n/total)
 
-library(textrank)
+frequency <- frequency %>% 
+  select(ID, word, freq) %>% 
+  spread(ID, freq) %>%
+  arrange(no_R_cites, has_R_cites)
 
-# keywords for each title
-keyw <- map(cran_cites_in_archy_journals$TI, 
-            ~textrank_keywords(unlist(str_split(paste0(.x, collapse = " "), " "))[!unlist(str_split(paste0(.x, collapse = " "), " ")) %in% stop_words$word]))
+library(scales)
 
+ggplot(frequency, 
+       aes(no_R_cites, 
+           has_R_cites)) +
+  geom_jitter(alpha = 0.1, 
+              size = 2.5, 
+              width = 0.25, 
+              height = 0.25) +
+  geom_text(aes(label = word), 
+            check_overlap = TRUE, 
+            vjust = 1.5) +
+  scale_x_log10(labels = percent_format()) +
+  scale_y_log10(labels = percent_format()) +
+  geom_abline(color = "red")
 
-map(keyw, ~enframe(.x$pagerank$vector) %>% 
-  arrange(desc(value)))
+word_ratios <- tidy_cites %>%
+  count(word, ID) %>%
+  filter(sum(n) >= 10) %>%
+  ungroup() %>%
+  spread(ID, n, fill = 0) %>%
+  mutate_if(is.numeric, funs((. + 1) / sum(. + 1))) %>%
+  mutate(logratio = log(has_R_cites / no_R_cites)) %>%
+  arrange(desc(logratio))
 
-# tf-idf to show words most important to each journal
-# not very interesting
-cran_cites_in_archy_journals %>% 
-  filter(SO %in% top_journals_by_articles$SO) %>% 
-  select(SO, TI) %>% 
-  unnest_tokens(word, TI) %>% 
-  anti_join(stop_words) %>%   
-  count(SO, word, sort = TRUE) %>% 
-  bind_tf_idf(word, SO, n) %>% 
-  arrange(desc(tf_idf)) %>% 
-  mutate(word = factor(word, levels = rev(unique(word)))) %>% 
-  group_by(SO) %>% 
-  top_n(5) %>% 
-  ungroup %>%
-  ggplot(aes(word, tf_idf, fill = SO)) +
+word_ratios %>%
+  group_by(logratio < 0) %>%
+  top_n(10, abs(logratio)) %>%
+  ungroup() %>%
+  mutate(word = reorder(word, logratio)) %>%
+  ggplot(aes(word, logratio, fill = logratio < 0)) +
   geom_col(show.legend = FALSE) +
-  labs(x = NULL, y = "tf-idf") +
-  facet_wrap(~SO, ncol = 2, scales = "free") +
-  coord_flip()
+  coord_flip() +
+  ylab("log odds ratio (has_R_cites/no_R_cites)") +
+  scale_fill_discrete(name = "", labels = c("has_R_cites", "no_R_cites"))
+
+
 ```
 
 

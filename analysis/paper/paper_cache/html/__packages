@@ -12,3 +12,9 @@ forcats
 bindrcpp
 glue
 ggrepel
+tidytext
+lattice
+survival
+Formula
+Hmisc
+scales
