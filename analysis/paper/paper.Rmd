@@ -9,14 +9,6 @@ output:
       number_sections: false
       fig_caption: yes
       reference_docx: "../templates/template.docx" # Insert path for the DOCX file
-bibliography: references.bib
-csl: "../templates/journal-of-archaeological-science.csl" # Insert path for the bib-style
-abstract: |
-  Text of abstract
-keywords: |
-  keyword 1; keyword 2; keyword 3
-highlights: |
-  These are the highlights. 
 ---
 
 
@@ -42,8 +34,9 @@ library(tidytext)
 library(scales)
 ```
 
-# Narrative to accompany the slides
+# Narrative to accompany the slides for our talk 
 
+These are our notes for preparing our slides for our CAA2018 presentation in the session "R as an archaeological tool: current state and directions" (https://github.com/MartinHinz/isaak_conf_sessions/tree/master/caa_2018_tuebingen)
 
 ## Slide 1: Title slide    
 
@@ -162,7 +155,11 @@ ggsave(filename = "all_sciences_citing_R_over_time.png",
 
 This plot shows how data analysis is changing in the sciences more broadly towards the use of the R programming language. We searched the Web of Science for citations to the R program over the last ten years, and filtered the results to the top ten journals with the highest number of citations to this software. The purpose of this filtering step was to find areas of research were R is generally known, so we can see how it's use is changing over time. Note that many articles that use R do not cite the R program, so these numbers are underestimates of the true use of R in science. 
 
-We got `r how_many_articles_in_top_journals_for_cran_cites` articles in our sample, and we can make two major observations. First, the areas of science that have seen big growth in the use of R are ecology, evolution and related biological sciences. We also see increases in multi-disciplinary journals such as PeerJ and PLOS One. The scale of the increases is quite impressive, we see many journals in our sample starting from less than 1% of articles citing R and now have around 20% of articles citing R. 
+We got `r how_many_articles_in_top_journals_for_cran_cites` articles in our sample, and we can make two major observations. 
+
+First, the areas of science that have seen big growth in the use of R are ecology, evolution and related biological sciences. We also see increases in multi-disciplinary journals such as PeerJ and PLOS One. 
+
+Second, the scale of the increases is quite impressive. We see many journals in our sample starting from less than 1% of articles citing R and now have around 20% of articles citing R. 
 
 So, we can see this is a substantial change in the way researchers are working in many fields. What about archaeology? Do we also see a change like this?
 
@@ -413,7 +410,76 @@ This plot supports our initial observations from the journals titles, which is t
 
 ## Slide 9: The unrealised potential of R for reproducible research [signpost slide only]
 
-We would now like to focus on a small sub-set of these papers using R, because they are doing something very interesting that we think all archaeologists using a programming language should be doing. This subset of papers are demonstrating the potential of R for open and reproducible research. 
+We would now like to focus on a small sub-set of these papers using R, because they are doing something very interesting that we think all archaeologists doing data analysis also should be doing. This subset of papers are demonstrating the potential of R for open and reproducible research. 
+
+In this figure we show a simple example of what we see in this small-subset of papers. On the left we see a plain-text document written in R Markdown. This means that is has lines of code in amongst lines of normal text. We can format the text with simple additions, such as the underscore to indicate italics and the pound symbol to indicate a heading. These simple additions are Markdown, and we can also use Markdown for citations and cross-references, though we don't show them in our example here. This document format allows us to mix R code and text in the same document. Here we see a short snippet of R code in the text (nrow(cars)) as well as a longer block of code below.
+
+When this R Markdown document is rendered, or converted to another format such as PDF or Microsoft Word, we see that the code is replaced by the output it has generated. On the right side of this figure we see that the inline code has been replaced by the number 50, and the code block below has been replaced by the plot. 
+
+This is how R helps to make research reproducible - we have found that some archaeologists are writing their entire journal articles useing R Markdown, and they share their plain-text document along with their publication. This means that the reader can see all of the details of the data analysis, and all of the small decisions made along the way. Many of these decisions are too tedious to describe in the methods section of an article, but they can be important for evaluating the robustness of an anlaysis. These details are also important to know if we want to extend a published analysis onto a new set of data. 
+
+## Slide 10: An increasing number of archaeologists are publishing reproducible research 
+
+```{r}
+archy_ctv_readme <- readLines(str_glue('{here::here()}/analysis/data/raw_data/ctv-archaeology-README.md'))
+
+top_archy_journals <-
+ str_subset(archy_ctv_readme, "Journal of Archaeological Method and Theory|J Archaeol Sci|Journal of Anthropological Archaeology|Journal of Archaeological Science")
+
+top_archy_journal_names <-
+  unlist(str_extract_all(archy_ctv_readme, "Journal of Archaeological Method and Theory|J Archaeol Sci|Journal of Anthropological Archaeology|Journal of Archaeological Science"))
+
+
+top_archy_journal_names <- ifelse(top_archy_journal_names == "J Archaeol Sci",
+                                  "Journal of Archaeological Science",
+                                  top_archy_journal_names)
+
+archy_ctv_readme <- top_archy_journals
+archy_ctv_readme <- str_remove_all(archy_ctv_readme, "[[:punct:]]")
+archy_ctv_readme_20XX <- str_extract(archy_ctv_readme, " 20[[:digit:]]{2} ")
+archy_ctv_readme_20XX <- str_squish(unlist(archy_ctv_readme_20XX))
+archy_ctv_readme_20XX <- as.numeric(archy_ctv_readme_20XX)
+archy_ctv_readme_20XX <- archy_ctv_readme_20XX[archy_ctv_readme_20XX > 2010]
+
+number_of_reproducible_articles <- length(archy_ctv_readme_20XX)
+
+ggplot(data_frame(archy_ctv_readme_20XX,
+                  top_archy_journal_names),
+       aes(archy_ctv_readme_20XX,
+           fill = str_wrap(top_archy_journal_names, 15))) +
+  geom_bar() +
+  theme_minimal(base_size = 16) +
+  scale_x_continuous(limits = c(min(archy_ctv_readme_20XX),
+                                max(archy_ctv_readme_20XX)+0.5),
+                     breaks = seq(min(archy_ctv_readme_20XX),
+                                  max(archy_ctv_readme_20XX)+0.5, 1)) +
+  ggtitle(str_glue('Articles in archaeology journals\nusing R for reproducible research (n = {length(archy_ctv_readme_20XX)})')) +
+  scale_fill_discrete(name = "Journal") +
+  theme(legend.text=element_text(size=10),
+        legend.key.size = unit(2, 'lines'),
+        legend.position = "bottom"
+        ) +
+  xlab("Year of publication") +
+  ylab("Number of articles")
+
+ggsave(filename = "archaeology_articles_r_reproducible.png",
+       path = str_glue('{here::here()}/analysis/figures'),
+       height = 9,
+       width = 9)
+```
+
+In our sample of archaeology articles, we identified `r number_of_reproducible_articles` articles that use R to make their work reproducible. These articles include R script files and data files with the articles, either in the supplementary materials or in a trustworthy data repository. This plot shows that although the number is small, it is increasing, suggesting the beginning of a new approach to how archaeologists share their research.
+
+These `r number_of_reproducible_articles` articles in the subset of articles that use R to make their work reproducible are distinct from the other articles the cite R because most of the articles that cite R lack several features. These include:
+
+- making the data files available with their publication
+- making the R script files available with the publication
+- using R Markdown to add narrative text with the R code to give explanation and make it easier for readers to understand the analysis
+
+Articles that have these three characteristics are part of a new paradigm in scientific communication, and with these `r number_of_reproducible_articles` articles, we have identified the beginning of this paradigm in archaeology. 
+
+## Slide 11: Our new package, rrtools, and how it helps
+
 
 
 
@@ -422,30 +488,6 @@ We would now like to focus on a small sub-set of these papers using R, because t
 
 
 
-```{r}
-
-word_ratios <- tidy_cites %>%
-  count(word, ID) %>%
-  filter(sum(n) >= 10) %>%
-  ungroup() %>%
-  spread(ID, n, fill = 0) %>%
-  mutate_if(is.numeric, funs((. + 1) / sum(. + 1))) %>%
-  mutate(logratio = log(has_R_cites / no_R_cites)) %>%
-  arrange(desc(logratio))
-
-word_ratios %>%
-  group_by(logratio < 0) %>%
-  top_n(10, abs(logratio)) %>%
-  ungroup() %>%
-  mutate(word = reorder(word, logratio)) %>%
-  ggplot(aes(word, logratio, fill = logratio < 0)) +
-  geom_col(show.legend = FALSE) +
-  coord_flip() +
-  ylab("log odds ratio (has_R_cites/no_R_cites)") +
-  scale_fill_discrete(name = "", labels = c("has_R_cites", "no_R_cites"))
-
-
-```
 
 
 
@@ -456,35 +498,6 @@ word_ratios %>%
 
 
 
-
-
-
-
-
-## Notes on data analysis for the presentation
-
-
-
-
-These are our notes for preparing our slides for our CAA2018 presentation in the session "R as an archaeological tool: current state and directions" (https://github.com/MartinHinz/isaak_conf_sessions/tree/master/caa_2018_tuebingen)
-
-## What are the top archaeology journals by number of papers published?
-
-We need to know this to plan for the data collection for our JCCA paper, it's not central to our CAA presentation, but I've put it here so I know where to find it later (I hope).
-
-Data are from an 'advanced search' of apps.webofknowledge.com using WC=Archaeology on apps.webofknowledge.com.
-
-## Citations of R Core in articles on Web of Science
-
-We wanted to to see how R Core is cited in scientific literature in general, and in archaeology in particular.
-
-
-
-For all scientific journals tracked by the WoS:
-
-For archaeology journals only:
-
-For 2017 only:
 
 
 
@@ -525,9 +538,7 @@ ggplot(most_popular_journals_over_time,
 
 ```
 
-## Text mining titles in archaeology journal articles that cite R Core
 
-What are the key words in the titles of these archaeology articles that cite R Core, and how do they differ from other archaeology articles?
 
 
 # Acknowledgements
