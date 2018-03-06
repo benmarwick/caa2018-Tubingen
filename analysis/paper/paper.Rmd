@@ -37,104 +37,52 @@ library(caa2018) # Or use devtools::load_all('.', quiet = T) if your code is in 
 
 library(ggrepel)
 library(tidyverse)
-```
-
-## Introduction
-
-These are our notes for preparing our slides for our CAA2018 presentation in the session "R as an archaeological tool: current state and directions" (https://github.com/MartinHinz/isaak_conf_sessions/tree/master/caa_2018_tuebingen)
-
-## What are the top archaeology journals by number of papers published?
-
-We need to know this to plan for the data collection for our JCCA paper, it's not central to our CAA presentation, but I've put it here so I know where to find it later (I hope).
-
-Data are from an 'advanced search' of apps.webofknowledge.com using WC=Archaeology on apps.webofknowledge.com.
-
-For 2017 only:
-
-```{r}
-wc_archaeology_2017 <- 
-  readr::read_tsv(paste0(here::here(), "/analysis/data/raw_data/savedrecs.txt"), 
-            quote = "")
-```
-
-```{r top-archaeology-journals-by-articles}
-# The 10 journals with the most articles are:
-
-top_journals_by_articles <- 
-wc_archaeology_2017 %>% 
-  group_by(SO) %>% 
-  tally(sort = TRUE) 
-
-knitr::kable(head(top_journals_by_articles, 10), 
-             caption = "The top 10 archaeology journals, by number of papers published in 2017")
-```
-
-For 2007-2017:
-
-```{r}
 library(glue)
-
-data_files_from_2007_to_2017 <- 
-  paste0(here::here(), glue("/analysis/data/raw_data/savedrecs ({1:2}).txt"))
+library(tidytext)
+library(scales)
 ```
 
-```{r fig.height=10}
+## Narrative to accompany the slides
 
-wc_archaeology_2007_to_2017 <- 
-  map(data_files_from_2007_to_2017,
-      ~readr::read_tsv(.x, quote = "")) %>% 
-  bind_rows()
 
-# most popular journals over time
-most_popular_journals_over_time <- 
-wc_archaeology_2007_to_2017 %>% 
-  group_by(SO, PY) %>% 
-  tally(sort = TRUE) %>% 
-  filter(n >= 50) %>% 
-  ungroup()
+- Slide 1: Title slide    
 
-ggplot(most_popular_journals_over_time,
-       aes(PY, 
-           n,
-           colour = SO)) +
-  geom_line() +
-  geom_text_repel(
-    data = subset(most_popular_journals_over_time, 
-                  PY == max(PY)),
-    aes(label = SO),
-    size = 3,
-    nudge_x = 15,
-    segment.color = NA
-  ) +
-  xlim(2007, 2019) +
-  theme_minimal() +
-  theme(legend.position="none") +
-  ggtitle("Number of articles per year in Archaeology journals",
-          subtitle = "Data from apps.webofknowledge.com,\nusing WC=Archaeology in SCI-EXPANDED & SSCI for 2007-2017")
-```
+In this presentation we will talk about how archaeologists are changing their data analysis practices to make their research more reproducible and open. We will the rrtools package, which is our specific contribution to help with the challenge of making reproducible research in archaeology easier.
 
-## Citations of R Core in articles on Web of Science
+- Slide 2: Motivation
 
-We wanted to to see how R Core is cited in scientific literature in general, and in archaeology in particular.
+Our motivation for this topic comes from a profound change that we have been observing in how researchers analyse their data.
 
-We did a 'Cited Reference Search' in WoS for title "R: A Language and Environment for Statistical Computing" and author = "R Core Team", which is the output from  `citation()`. This function first appeared in 2004 https://github.com/wch/r-source/commits/9a5c086855d2e8fb07f670e3315871b2de31a4fd/src/library/base/inst/CITATION 
+Increasingly, we are seeing researchers publishing research that uses a programming language to analyse their data. Similarly, we see journal articles accompanied by scripts of programming language so that readers can study the details of the data analysis methods. 
 
-Note that before 2012 the authors were "R Development Core Team", and then it was simplified to "R Core Team" https://github.com/wch/r-source/commit/9a5c086855d2e8fb07f670e3315871b2de31a4fd#diff-80bb8a8b133a6204e9642d76791927e2
+This is an important change away from using mouse-driven, point-and-click software for data analysis. When archaeologists use software such as SPSS and Past (as you see in our screenshots here), it is very difficult for them to share the details of their analysis. When readers cannot see the details of an analysis, it is difficult for them to be confident in the results described in an article. 
 
-This is our exact search string for WoS:
+- Slide 3: Outline
 
-You searched for: CITED AUTHOR: ("R DEV COR TEAM" OR "R CORE" OR "R CORE TEAM") AND CITED WORK: ("R: A Language and Environment for Statistical Computing") AND LANGUAGE: (English) AND DOCUMENT TYPES: (Article)
-Timespan: All years. Indexes: SCI-EXPANDED, SSCI, A&HCI, ESCI.
+In this presentation we will briefly review some data showing change in the use of programming languages in the sciences generally, and in archaeology in particular. We will look at citation data from thousands of journal articles that are available in the Web of Science database produced by Clarivate Analytics. We focus on the R programming language, because this is by far the most widely used langauge in archaeology. 
 
-For all scientific journals tracked by the WoS:
+Secondly, we will review a few case studies of how R is used by archaeologists, to show the potential that using a programming language has for opening and accelerating archaeological research. 
 
-```{r}
+Finally, we will briefly introduce our R package, rrtools, which is designed to simplify and standardise the process of using R for archaeology, and making research more open and reproducible. 
+
+- Slide 4: Current uses of R [signpost slide only]
+
+- Slide 5: Articles in all sciences citing R 
+
+```{r all-sciences-citing-r, fig.height=10}
+
+# We did a 'Cited Reference Search' in WoS for title "R: A Language and Environment for Statistical Computing" and author = "R Core Team", which is the output from  `citation()`. This function first appeared in 2004 https://github.com/wch/r-source/commits/9a5c086855d2e8fb07f670e3315871b2de31a4fd/src/library/base/inst/CITATION 
+# 
+# Note that before 2012 the authors were "R Development Core Team", and then it was simplified to "R Core Team" https://github.com/wch/r-source/commit/9a5c086855d2e8fb07f670e3315871b2de31a4fd#diff-80bb8a8b133a6204e9642d76791927e2
+# 
+# This is our exact search string for WoS:
+# 
+# You searched for: CITED AUTHOR: ("R DEV COR TEAM" OR "R CORE" OR "R CORE TEAM") AND CITED WORK: ("R: A Language and Environment for Statistical Computing") AND LANGUAGE: (English) AND DOCUMENT TYPES: (Article)
+# Timespan: All years. Indexes: SCI-EXPANDED, SSCI, A&HCI, ESCI.
 
 cran_cites_files <- 
     paste0(here::here(), glue("/analysis/data/raw_data/cited_cran/savedrecs ({1:11}).txt"))
-```
 
-```{r fig.height=10}
 cran_cites_all_areas_all_years <- 
   map(cran_cites_files,
       ~readr::read_tsv(.x, 
@@ -150,78 +98,232 @@ top_journals_for_cran_cites <-
   group_by(SO) %>% 
   tally(sort = TRUE)
 
+how_many_articles_in_top_journals_for_cran_cites <- 
+  sum(top_journals_for_cran_cites$n)
+
+top_journals_for_cran_cites_articles_per_year <- 
+  read_csv(str_glue('{here::here()}/analysis/data/raw_data/top_journals_for_cran_cites_articles_per_year.csv')) %>% 
+  select(-X1) %>% 
+  gather(variable, value, -year) %>% 
+  separate(variable, 
+           into = str_glue('X{1:4}'), 
+           by = "_") %>% 
+  select(year, X4, value)
+           
 # tally by year
 cran_cites_all_areas_top_journals_by_year <- 
   cran_cites_all_areas_all_years %>% 
   filter(SO %in% top_journals_for_cran_cites$SO[1:10]) %>% 
   group_by(SO, PY) %>% 
   tally(sort = TRUE) %>% 
-  ungroup() 
+  mutate(journalname = str_remove_all(SO, " |-"),
+         PY = as.integer(PY)) %>% 
+  left_join(top_journals_for_cran_cites_articles_per_year,
+            by = c('journalname' = 'X4', 
+                   'PY' = "year")) %>% 
+  mutate(prop = n / value ) %>% 
+  filter(SO != 'JOURNAL OF STATISTICAL SOFTWARE') %>% 
+  ungroup()
+ 
 
+min_y <- 2007
+max_y <- 2025
 ggplot(cran_cites_all_areas_top_journals_by_year,
        aes(PY,
-           n,
+           prop,
            colour = SO)) +
-  geom_line() +
+  geom_line(size = 2) +
   geom_text_repel(
     data = subset(cran_cites_all_areas_top_journals_by_year, 
                   PY == max(PY)),
-    aes(label = str_wrap(SO, 15)),
-    size = 3,
-    direction = "both",
-    nudge_x = 1,
-    segment.color = NA
+    aes(label = str_wrap(SO, 40)),
+    size = 4,
+    nudge_x = 0,
+    hjust = 0,
+    segment.color = NA,
+    direction = "y"
   ) +
-  xlim(2007, 2018) +
+  scale_x_continuous(breaks = min_y:max_y,
+                     labels = c(min_y:2017, rep("", length(2018:max_y))),
+                     limits = c(min_y, max_y)) +
+  scale_y_continuous(labels = scales::percent) +
+  xlab("Publication year") +
+  ylab("Percentage of articles in that journal") +
   theme_minimal() +
   theme(legend.position="none") +
-  ggtitle("Number of articles per year citing R Core in top 10 WoS journals",
+  ggtitle(str_glue('Percentage of articles per year citing R in top 10 WoS journals ({prettyNum(how_many_articles_in_top_journals_for_cran_cites,",")} articles)'),
           subtitle = "Data from apps.webofknowledge.com,\nusing in SCI-EXPANDED & SSCI for 2007-2017")
+
+ggsave(filename = "all_sciences_citing_R_over_time.png",
+       path = str_glue('{here::here()}/analysis/figures'),
+       height = 5,
+       width = 9)
 ```
 
-For archaeology journals only:
+This plot shows how data analysis is changing in the sciences more broadly towards the use of the R programming language. We searched the Web of Science for citations to the R program over the last ten years, and filtered the results to the top ten journals with the highest number of citations to this software. The purpose of this filtering step was to find areas of research were R is generally known, so we can see how it's use is changing over time. Note that many articles that use R do not cite the R program, so these numbers are underestimates of the true use of R in science. 
 
-```{r}
+We got `r how_many_articles_in_top_journals_for_cran_cites` articles in our sample, and we can make two major observations. First, the areas of science that have seen big growth in the use of R are ecology, evolution and related biological sciences. We also see increases in multi-disciplinary journals such as PeerJ and PLOS One. The scale of the increases is quite impressive, we see many journals in our sample starting from less than 1% of articles citing R and now have around 20% of articles citing R. 
 
+So, we can see this is a substantial change in the way researchers are working in many fields. What about archaeology? Do we also see a change like this?
+
+- Slide 6: Archaeology articles citing R
+
+```{r top-archaeology-journals-by-citations-of-r}
+
+# Data are from an 'advanced search' of apps.webofknowledge.com using WC=Archaeology on apps.webofknowledge.com.
+
+# get the top archaeology journals by numbers of articles.
+wc_archaeology_2017 <- 
+  readr::read_tsv(paste0(here::here(), "/analysis/data/raw_data/savedrecs.txt"), 
+            quote = "")
+
+# The 10 journals with the most articles are:
+top_journals_by_articles <- 
+wc_archaeology_2017 %>% 
+  group_by(SO) %>% 
+  tally(sort = TRUE) 
+
+# For 2007-2017:
+
+data_files_from_2007_to_2017 <- 
+  paste0(here::here(), glue("/analysis/data/raw_data/savedrecs ({1:2}).txt"))
+
+wc_archaeology_2007_to_2017 <- 
+  map(data_files_from_2007_to_2017,
+      ~readr::read_tsv(.x, quote = "")) %>% 
+  bind_rows()
+
+total_number_of_articles_in_sample <- 
+  nrow(wc_archaeology_2007_to_2017) 
+
+# most populararchaeology journals over time, that have some mention of R
+most_popular_journals_over_time <- 
+wc_archaeology_2007_to_2017 %>% 
+  group_by(SO, PY) %>% 
+  tally(sort = TRUE) %>% 
+  filter(!SO %in% c("JOURNAL OF CULTURAL HERITAGE",
+                    "STUDIES IN CONSERVATION",
+                    "INTERSECCIONES EN ANTROPOLOGIA",
+                    "ISRAEL EXPLORATION JOURNAL",
+                    "JOURNAL OF MATERIAL CULTURE",
+                    "TRABAJOS DE PREHISTORIA",
+                    "ARCHEOSCIENCES-REVUE D ARCHEOMETRIE")) %>% 
+  filter(n >= 2) %>% 
+  ungroup()
+
+most_popular_journals_over_time_names <- 
+  unique(most_popular_journals_over_time$SO)
+
+archy_journals_total_number_of_articles <- 
+  read_csv(str_glue('{here::here()}/analysis/data/raw_data/top_archaeology_journals_articles_per_year.csv'))
+
+top_archaeology_journals_articles_per_year <- 
+  archy_journals_total_number_of_articles %>% 
+  gather(variable, value, -journal_name) %>% 
+  mutate(year = as.numeric(variable)) %>% 
+  select(-variable)
+  
 cran_cites_in_archy_journals <- 
   cran_cites_all_areas_all_years %>% 
-  filter(SO %in% top_journals_by_articles$SO)
+  filter(SO %in% most_popular_journals_over_time_names)
+
+# what archaeology journals cite R?
+# unique(cran_cites_in_archy_journals$SO)
+
+archy_journals_total_number_of_citing_articles <- 
+  nrow(cran_cites_in_archy_journals)
 
 cran_cites_in_archy_journals_per_year <- 
   cran_cites_in_archy_journals %>% 
   group_by(SO, PY) %>% 
   tally(sort = TRUE) %>% 
   ungroup() %>% 
-  mutate(PY = as.numeric(PY)) 
+  mutate(PY = as.numeric(PY))  %>% 
+  left_join(top_archaeology_journals_articles_per_year,
+            by = c("SO" = "journal_name",
+                   "PY" = "year")) %>% 
+  mutate(prop = n / value) %>% 
+  group_by(SO) %>% 
+  mutate(jn = str_glue('{SO} (n = {sum(n)})')) %>% 
+  ungroup()
 
+min_y <- 2007
+max_y <- 2040
+
+library(ggpmisc)
+jas_cites_r <- 
+cran_cites_in_archy_journals_per_year %>% 
+  filter(SO == "JOURNAL OF ARCHAEOLOGICAL SCIENCE") %>% 
+  ggplot(aes(PY,
+           prop)) +
+  geom_point(size = 4) +
+  geom_smooth(method = "lm",
+              se = FALSE) +
+  stat_poly_eq(aes(label =  paste(..eq.label.., 
+                                  ..adj.rr.label..,
+                                  sep = "~~~~")),
+               formula = y~x, 
+               parse = TRUE,
+               size = 3,
+               label.y.npc = 0.7) +
+  stat_fit_glance(label.y.npc = 0.7,
+                  size = 3,
+                  method = "lm", 
+                  method.args = list(formula = y ~ x),
+                  geom = "text",
+                  aes(label = paste("p-value: ",signif(..p.value.., digits = 4)))) +
+  xlab("year") +
+  ylab("Proportion of articles citing R") +
+  ggtitle(expression(paste("Articles citing R in ", italic("Journal of Archaeological Science")))) +
+  theme_bw(base_size = 6)
+  
 ggplot(cran_cites_in_archy_journals_per_year,
        aes(PY,
-           n,
+           prop,
            colour = SO)) +
-  geom_line() +
+  geom_line(size = 2) +
   geom_text_repel(
     data = subset(cran_cites_in_archy_journals_per_year, 
                   PY == max(PY)),
-    aes(label = str_wrap(SO, 10)),
-    size = 3,
+    aes(label = jn),
+    direction = "y",
+    size = 5,
     nudge_x = 1,
-    segment.color = NA
-  ) +
-  xlim(2007, 2019) +
+    hjust = 0) +
   theme_minimal() +
-  theme(legend.position="none") +
-  ggtitle("Number of Archaeology articles per year citing R Core",
-          subtitle = "Data from apps.webofknowledge.com,\nusing in SCI-EXPANDED & SSCI for 2007-2017")
+  theme(legend.position="none",
+        axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) +
+  scale_x_continuous(breaks = min_y:max_y,
+                     labels = c(min_y:2017, rep("", length(2018:max_y))),
+                     limits = c(min_y, max_y)) +
+  scale_y_continuous(labels = scales::percent) +
+  xlab("Publication year") +
+  ylab("Percentage of articles in that journal") +
+  ggtitle(str_glue('Percentage of Archaeology articles per year citing R ({archy_journals_total_number_of_citing_articles} out of {prettyNum(total_number_of_articles_in_sample, ",")} articles in sample)'),
+          subtitle = "Data from apps.webofknowledge.com,\nusing in SCI-EXPANDED & SSCI for 2007-2017")  +
+  annotation_custom(grob = ggplotGrob(jas_cites_r), 
+                          xmin = 2030, xmax = 2040, 
+                          ymin = 0.10, ymax = 0.17)
+
+ggsave(filename = "all_archaeology_citing_R_over_time.png",
+       path = str_glue('{here::here()}/analysis/figures'),
+       height = 6,
+       width = 10)
 ```
 
+Here are the results for archaeological articles. We found `r archy_journals_total_number_of_citing_articles` articles that cite R over the last ten years. Note that this is certinaly not complete, since these are just for the journals tracked by the Web of Science database, and we know that archaeologists publish is a great variaty of journals.
 
-## Text mining titles in archaeology journal articles that cite R Core
+There are four important details in these plots:
 
-What are the key words in the titles of these archaeology articles that cite R Core, and how do they differ from other archaeology articles?
+The first detail we see here is that overall, the proportions of articles citing R in archaeology are much smaller than what we see in the ecology journals on the previous slide. The absolute numbers of archaeology articles here are are also very low. Only the _Journal of Archaeological Science_ has more than 10 articles in our sample. We have yet to adopt programming for data analysis in the same way that ecologists have. 
 
+The second detail is that we do not see a significant increase over time, unlike the ecology journals that steeply increase over time. Both archaeology and the other sciences we saw on the previous slide show an increase in citing R at around 2013-2014, we do not yet see much of an upward trend in the archaeology journals. Indeed, the first citations of R in several archaeology journals only occured in the last two years. The plot on the upper right of this slide shows a statistical test of change over time for articles in JAS. With a low r-squared value and high p-value for the linear model, we conclude that there is no evidence for an increase in citations over time in this journal.  
 
-```{r}
-library(tidytext)
+The fourth detail we see is the distinctive types of journals that have articles citing R. There is a clear focus on scientific archaeology, with _Journal of Archaeological Science_ having the highest total number of articles. We also see geoarchaeology, lithics, and environmental archaeology represented in the journal names. We can investigate this further with statistical analysis of the words in the titles of all the articles in our sample.
+
+- Slide 7: What are archaeologists doing with R?
+
+```{r text-mining-article-titles-archaeology}
 # https://www.tidytextmining.com/twitter.html
 
 # These are all archy articles
@@ -236,6 +338,12 @@ wc_archaeology_2007_to_2017_no_R_cites <-
   wc_archaeology_2007_to_2017 %>% 
   filter(TI %nin% cran_cites_in_archy_journals$TI)
 
+# we have a very skewed sample, so let's match 
+cran_cites_in_archy_journals_lots <- 
+  cran_cites_in_archy_journals %>% 
+  sample_n(nrow(wc_archaeology_2007_to_2017_no_R_cites),
+           replace = TRUE)
+
 # combine
 archy_journal_articles <- 
   bind_rows(wc_archaeology_2007_to_2017_no_R_cites %>% 
@@ -244,13 +352,13 @@ archy_journal_articles <-
            cran_cites_in_archy_journals %>% 
             mutate(ID = "has_R_cites"))
 
-library(tidytext)
-library(stringr)
 
 tidy_cites <- 
 archy_journal_articles %>% 
   unnest_tokens(word, TI) %>%
-  filter(!word %in% stop_words$word,
+  filter(!word %in% c(stop_words$word, "archaeology", 
+                      "archaeological",
+                      "analysis", "study", "site"),
          str_detect(word, "[a-z]"))
 
 frequency <- 
@@ -267,21 +375,44 @@ frequency <- frequency %>%
   spread(ID, freq) %>%
   arrange(no_R_cites, has_R_cites)
 
-library(scales)
 
 ggplot(frequency, 
        aes(no_R_cites, 
            has_R_cites)) +
+    geom_abline(color = "red", 
+              size = 2) +
   geom_jitter(alpha = 0.1, 
               size = 2.5, 
               width = 0.25, 
               height = 0.25) +
-  geom_text(aes(label = word), 
-            check_overlap = TRUE, 
-            vjust = 1.5) +
-  scale_x_log10(labels = percent_format()) +
+  geom_text_repel(aes(label = word), 
+            size = 5,
+            segment.colour = NA) +
+  scale_x_log10(labels = percent_format(),
+                limits = c(0.001, 0.02)) +
   scale_y_log10(labels = percent_format()) +
-  geom_abline(color = "red")
+
+  theme_minimal(base_size = 16) +
+  xlab("Articles that do not cite R") +
+  ylab("Articles that cite R") +
+  ggtitle("Comparing the frequency of words used in archaeology articles")
+
+ggsave(filename = "archaeology_articles_word_freqs.png",
+       path = str_glue('{here::here()}/analysis/figures'),
+       height = 9,
+       width = 9)
+```
+
+Our results so far show that only a small number of archaeologists are using R for their research. The names of the journals hint that most of these people do scientific archaeology, rather than social or humanistic archaeology. 
+
+Here we see a comparison of word frequencies of the titles of archaeology journal articles. Words near the red line are used with about equal frequencies by articles that cite R and by articles that do not cite R. Words far away from the red line are used much more by one group of articles compared to the other. Words that appear in this plot are ones that have been used at least once in article titles of both groups.
+
+...
+
+
+
+
+```{r}
 
 word_ratios <- tidy_cites %>%
   count(word, ID) %>%
@@ -306,6 +437,87 @@ word_ratios %>%
 
 ```
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Notes on data analysis for the presentation
+
+
+
+
+These are our notes for preparing our slides for our CAA2018 presentation in the session "R as an archaeological tool: current state and directions" (https://github.com/MartinHinz/isaak_conf_sessions/tree/master/caa_2018_tuebingen)
+
+## What are the top archaeology journals by number of papers published?
+
+We need to know this to plan for the data collection for our JCCA paper, it's not central to our CAA presentation, but I've put it here so I know where to find it later (I hope).
+
+Data are from an 'advanced search' of apps.webofknowledge.com using WC=Archaeology on apps.webofknowledge.com.
+
+## Citations of R Core in articles on Web of Science
+
+We wanted to to see how R Core is cited in scientific literature in general, and in archaeology in particular.
+
+
+
+For all scientific journals tracked by the WoS:
+
+For archaeology journals only:
+
+For 2017 only:
+
+
+
+
+```{r}
+library(glue)
+
+
+min_y <- 2007
+max_y <- 2030
+library(ggrepel)
+ggplot(most_popular_journals_over_time,
+       aes(PY, 
+           n,
+           colour = SO)) +
+  geom_line(size = 2) +
+  geom_text_repel(
+    data = subset(most_popular_journals_over_time, 
+                  PY == max(PY)),
+    aes(label = SO, 
+        y = (n), 
+        x = PY ),
+    size = 5, 
+    direction = "y",
+    hjust = 0,
+    segment.colour = NA
+  ) +
+  theme_minimal() +
+  scale_x_continuous(breaks = min_y:max_y,
+                     labels = c(min_y:2018, rep("", length(2019:max_y))),
+                     limits = c(min_y, max_y)) +
+  xlab("Publication year") +
+  scale_y_continuous(trans='log2') +
+  ylab("Number of articles (log scale)") +
+  theme(legend.position="none") +
+  ggtitle("Number of articles per year in Archaeology journals",
+          subtitle = "Data from apps.webofknowledge.com,\nusing WC=Archaeology in SCI-EXPANDED & SSCI for 2007-2017") 
+
+```
+
+## Text mining titles in archaeology journal articles that cite R Core
+
+What are the key words in the titles of these archaeology articles that cite R Core, and how do they differ from other archaeology articles?
 
 
 # Acknowledgements
