@@ -42,14 +42,14 @@ library(tidytext)
 library(scales)
 ```
 
-## Narrative to accompany the slides
+# Narrative to accompany the slides
 
 
-- Slide 1: Title slide    
+## Slide 1: Title slide    
 
 In this presentation we will talk about how archaeologists are changing their data analysis practices to make their research more reproducible and open. We will the rrtools package, which is our specific contribution to help with the challenge of making reproducible research in archaeology easier.
 
-- Slide 2: Motivation
+## Slide 2: Motivation
 
 Our motivation for this topic comes from a profound change that we have been observing in how researchers analyse their data.
 
@@ -57,7 +57,7 @@ Increasingly, we are seeing researchers publishing research that uses a programm
 
 This is an important change away from using mouse-driven, point-and-click software for data analysis. When archaeologists use software such as SPSS and Past (as you see in our screenshots here), it is very difficult for them to share the details of their analysis. When readers cannot see the details of an analysis, it is difficult for them to be confident in the results described in an article. 
 
-- Slide 3: Outline
+## Slide 3: Outline
 
 In this presentation we will briefly review some data showing change in the use of programming languages in the sciences generally, and in archaeology in particular. We will look at citation data from thousands of journal articles that are available in the Web of Science database produced by Clarivate Analytics. We focus on the R programming language, because this is by far the most widely used langauge in archaeology. 
 
@@ -65,9 +65,9 @@ Secondly, we will review a few case studies of how R is used by archaeologists, 
 
 Finally, we will briefly introduce our R package, rrtools, which is designed to simplify and standardise the process of using R for archaeology, and making research more open and reproducible. 
 
-- Slide 4: Current uses of R [signpost slide only]
+##- Slide 4: Current uses of R [signpost slide only]
 
-- Slide 5: Articles in all sciences citing R 
+## Slide 5: Articles in all sciences citing R 
 
 ```{r all-sciences-citing-r, fig.height=10}
 
@@ -166,7 +166,7 @@ We got `r how_many_articles_in_top_journals_for_cran_cites` articles in our samp
 
 So, we can see this is a substantial change in the way researchers are working in many fields. What about archaeology? Do we also see a change like this?
 
-- Slide 6: Archaeology articles citing R
+## Slide 6: Archaeology articles citing R
 
 ```{r top-archaeology-journals-by-citations-of-r}
 
@@ -321,7 +321,7 @@ The second detail is that we do not see a significant increase over time, unlike
 
 The fourth detail we see is the distinctive types of journals that have articles citing R. There is a clear focus on scientific archaeology, with _Journal of Archaeological Science_ having the highest total number of articles. We also see geoarchaeology, lithics, and environmental archaeology represented in the journal names. We can investigate this further with statistical analysis of the words in the titles of all the articles in our sample.
 
-- Slide 7: What are archaeologists doing with R?
+## Slide 7: What are archaeologists doing with R?
 
 ```{r text-mining-article-titles-archaeology}
 # https://www.tidytextmining.com/twitter.html
@@ -406,6 +406,16 @@ ggsave(filename = "archaeology_articles_word_freqs.png",
 Our results so far show that only a small number of archaeologists are using R for their research. The names of the journals hint that most of these people do scientific archaeology, rather than social or humanistic archaeology. 
 
 Here we see a comparison of word frequencies of the titles of archaeology journal articles. Words near the red line are used with about equal frequencies by articles that cite R and by articles that do not cite R. Words far away from the red line are used much more by one group of articles compared to the other. Words that appear in this plot are ones that have been used at least once in article titles of both groups.
+
+This plot supports our initial observations from the journals titles, which is that archaeologists using R tend to be doing more scientific archaeology. We see that many words relating to stone artefacts, zooarchaeology, and geoarchaeology are more frequently used by R-using archaeologists. On the other hand, articles that do not cite R more often discuss the Neolithic and metal-age periods, and less often reflect a technical specialisation. 
+
+## Slide 8: The unrealised potential of R for reproducible research [signpost slide only]
+
+## Slide 9: The unrealised potential of R for reproducible research [signpost slide only]
+
+We would now like to focus on a small sub-set of these papers using R, because they are doing something very interesting that we think all archaeologists using a programming language should be doing. This subset of papers are demonstrating the potential of R for open and reproducible research. 
+
+
 
 ...
 
