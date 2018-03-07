@@ -476,67 +476,44 @@ These `r number_of_reproducible_articles` articles in the subset of articles tha
 - making the R script files available with the publication
 - using R Markdown to add narrative text with the R code to give explanation and make it easier for readers to understand the analysis
 
-Articles that have these three characteristics are part of a new paradigm in scientific communication, and with these `r number_of_reproducible_articles` articles, we have identified the beginning of this paradigm in archaeology. 
+Articles that have these three characteristics are part of a new paradigm in scientific communication, and with these `r number_of_reproducible_articles` articles, we believe we have identified the beginning of this paradigm in archaeology. We think it will not be hard for archaeologists that already use R to make the transition to producing reproducible research by sharing their code and data. 
 
 ## Slide 11: Our new package, rrtools, and how it helps
 
+As we studied the papers in our sample, we looked for common approaches to making and organising the code and data files. We found that there were few common standards used by archaeologists in making their work reproducible. There was a great variety of information presented in the code and data files. Some papers include code that will generate every figure and numer in the text, while other papers only include code to produce one or two key figures in the paper. 
+
+Looking further afield, we also reviewed current efforts towards improving the reproducibility of research in other disciplines. In reviewing the literature we found several useful guides in diverse fields such as ecology and fluid dynamics. These guides described several best practices that are not yet common in archaeology. 
+
+So, after looking at the reproducible articles in archaeology, and the best practices in other disciplines, we wanted to make a simple toolkit that will help archaeologists to write reproducible research as easily as possible. This toolkit is an R package called rrtools. This package contains a small number of functions that automate many common analysis setup tasks. 
+
+On this slide we show the typical use of the key functions in rrtools that a researcher would use to quickly set up a compendium suitable for writing reproducible research in R. Each of these steps reflects a best practice that we've noted in our review of the literature:
+
+- use_compendium:  This function creates a new directory for the research project, and creates in R package within this directory. We use the R package structure as the standard for our directory because it is widely recognised by R users. This means that people know where to look for code, where to look for data, and where to look for dependancies and other information.     
+- usethis::use_mit_license: This function creates a copy of the MIT software lisence to the compendium. This is important for two reasons. First, because it tells the reader that the author is happy for their code to be reused by other people. And second, it tells the reader that the author does not take responsibility for any problems that the reader might have when they use the code. This is important for setting the expectations about the relationship between the author and the reader, regarding the use of code.     
+- devtools::use_github:  This will initiate the use of the Git version control system. This is the current state-of-the-art for version control of any kind of plain text file, including text, code, data, and images. This will also create a repository on the GitHub website. Using version control is important because it allows the author to time-travel back to earlier states of their analysis, if they take a dead-end path. It is also important for making collaboration smooth because many people can work on one set of files without losing track of what the most recent version is. Plus it is nice to have a remote back-up of our work in case of an emergency. The GitHub repository can be kept private if desired, until the work is published.     
+- use_readme_rmd:  This will create a simple document that is usually the first thing a reader sees when they browse the code files. This document is important because it helps to describe to the reader what to expect in the compendium, and it gives details of how to cite the compendium.     
+- use_analysis:  This function creates a set of folders according to the best practices for organising a typical reasearch project. We recognise that this file structure wont be perfect for every project. But we know that it will suit many projects quite well, and it will at least make the user think about how to organise their files logically, and according to best practises. On the next slide we can see the folders that this fucntion creates:
+
+## Slide 12: The best-practice directory structure from rrtools
+
+Here is the file structure the rrtools gives us. We wont discuss it in detail, except to point out two important principles that it enforces:
+
+- Keep the data separate from the methods. This means keep the code in a separate directory to the data    
+- Keep the raw data seprate from data that is created or derived during the analysis. 
+
+These two fundamental principles make it easy to stay organised during a complicated project, and make it easier for a reader to navigate their way through the compendium. 
+
+## Slide 13: Advanced reproducibility with rrtools
+
+The last three functions that rrtools gives us are advanced topics that we only summarise briefly here.  ...
 
 
 
-...
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-```{r}
-library(glue)
-
-
-min_y <- 2007
-max_y <- 2030
-library(ggrepel)
-ggplot(most_popular_journals_over_time,
-       aes(PY, 
-           n,
-           colour = SO)) +
-  geom_line(size = 2) +
-  geom_text_repel(
-    data = subset(most_popular_journals_over_time, 
-                  PY == max(PY)),
-    aes(label = SO, 
-        y = (n), 
-        x = PY ),
-    size = 5, 
-    direction = "y",
-    hjust = 0,
-    segment.colour = NA
-  ) +
-  theme_minimal() +
-  scale_x_continuous(breaks = min_y:max_y,
-                     labels = c(min_y:2018, rep("", length(2019:max_y))),
-                     limits = c(min_y, max_y)) +
-  xlab("Publication year") +
-  scale_y_continuous(trans='log2') +
-  ylab("Number of articles (log scale)") +
-  theme(legend.position="none") +
-  ggtitle("Number of articles per year in Archaeology journals",
-          subtitle = "Data from apps.webofknowledge.com,\nusing WC=Archaeology in SCI-EXPANDED & SSCI for 2007-2017") 
-
-```
 
 
 
