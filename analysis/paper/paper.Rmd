@@ -40,7 +40,7 @@ These are our notes for preparing our slides for our CAA2018 presentation in the
 
 ## Slide 1: Title slide    
 
-In this presentation we will talk about how archaeologists are changing their data analysis practices to make their research more reproducible and open. We will the rrtools package, which is our specific contribution to help with the challenge of making reproducible research in archaeology easier.
+In this presentation we will talk about how archaeologists are changing their data analysis practices to make their research more reproducible and open. We will introduce the rrtools package, which is our specific contribution to help with the challenge of making reproducible research in archaeology easier. "Our" meaning in this case a group of people whose names you can see here and / or who took part in thethe 2017 Summer School on Reproducible Research in Landscape Archaeology at the Freie Universität Berlin (17-21 July), funded and jointly organized by Excellence Cluster 264 Topoi, the Collaborative Research Center 1266, and ISAAKiel under the guidance of Ben Marwick. 
 
 ## Slide 2: Motivation
 
@@ -48,7 +48,7 @@ Our motivation for this topic comes from a profound change that we have been obs
 
 Increasingly, we are seeing researchers publishing research that uses a programming language to analyse their data. Similarly, we see journal articles accompanied by scripts of programming language so that readers can study the details of the data analysis methods. 
 
-This is an important change away from using mouse-driven, point-and-click software for data analysis. When archaeologists use software such as SPSS and Past (as you see in our screenshots here), it is very difficult for them to share the details of their analysis. When readers cannot see the details of an analysis, it is difficult for them to be confident in the results described in an article. 
+This is an important change away from using mouse-driven, point-and-click software for data analysis. When archaeologists use software such as SPSS and Past (as you see in our screenshots here), it is very difficult for them to share the details of their analysis. When readers cannot see the details of an analysis, it is difficult for them to be confident in the results described in an article. Also, for other researchers it may be near impossible to implement the described analysis in their own work as they lack the details on how to come to the desired conclusions. 
 
 ## Slide 3: Outline
 
@@ -157,7 +157,8 @@ This plot shows how data analysis is changing in the sciences more broadly towar
 
 We got `r how_many_articles_in_top_journals_for_cran_cites` articles in our sample, and we can make two major observations. 
 
-First, the areas of science that have seen big growth in the use of R are ecology, evolution and related biological sciences. We also see increases in multi-disciplinary journals such as PeerJ and PLOS One. 
+First, the areas of science that have seen big growth in the use of R are ecology, evolution and related biological sciences. This is especially significant for archaeologists, as ecology and biology are subjects from which they quite often adapt methods for analysis, as for example in point-pattern-analysis and statistical modelling. 
+We also see increases in multi-disciplinary journals such as PeerJ and PLOS One. 
 
 Second, the scale of the increases is quite impressive. We see many journals in our sample starting from less than 1% of articles citing R and now have around 20% of articles citing R. 
 
@@ -316,7 +317,7 @@ The first detail we see here is that overall, the proportions of articles citing
 
 The second detail is that we do not see a significant increase over time, unlike the ecology journals that steeply increase over time. Both archaeology and the other sciences we saw on the previous slide show an increase in citing R at around 2013-2014, we do not yet see much of an upward trend in the archaeology journals. Indeed, the first citations of R in several archaeology journals only occured in the last two years. The plot on the upper right of this slide shows a statistical test of change over time for articles in JAS. With a low r-squared value and high p-value for the linear model, we conclude that there is no evidence for an increase in citations over time in this journal.  
 
-The fourth detail we see is the distinctive types of journals that have articles citing R. There is a clear focus on scientific archaeology, with _Journal of Archaeological Science_ having the highest total number of articles. We also see geoarchaeology, lithics, and environmental archaeology represented in the journal names. We can investigate this further with statistical analysis of the words in the titles of all the articles in our sample.
+The fourth detail we see is the distinctive types of journals that have articles citing R. There is a clear focus on scientific archaeology, with _Journal of Archaeological Science_ having the highest total number of articles. Archaeology as a subject has always been situated between a humanistic and a scientific tradition, but studies using statistical methods lean towards the sciences, which we mean with the term "scientific archaeology". We also see geoarchaeology, lithics, and environmental archaeology represented in the journal names. We can investigate this further with statistical analysis of the words in the titles of all the articles in our sample.
 
 ## Slide 7: What are archaeologists doing with R?
 
