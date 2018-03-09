@@ -14,7 +14,7 @@ output:
 
 <!-- This is the format for text comments that will be ignored during renderings. Do not put R code in these comments because it will not be ignored. -->
 
-```{r, setup, echo = FALSE}
+```{r, setup, echo = FALSE, message = FALSE, warning = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   warning = FALSE,
@@ -22,6 +22,8 @@ knitr::opts_chunk$set(
   echo = FALSE,
   cache = TRUE,
   comment = "#>",
+  fig.height=5,
+  fig.width=5,
   fig.path = "../figures/"
 )
 
@@ -32,17 +34,19 @@ library(tidyverse)
 library(glue)
 library(tidytext)
 library(scales)
+library(ggpmisc)
+library(Hmisc)
 ```
 
 # Narrative to accompany the slides for our talk 
 
 These are our notes for preparing our slides for our CAA2018 presentation in the session "R as an archaeological tool: current state and directions" (https://github.com/MartinHinz/isaak_conf_sessions/tree/master/caa_2018_tuebingen)
 
-## Slide 1: Title slide    
+## Slide: Title slide    
 
 In this presentation we will talk about how archaeologists are changing their data analysis practices to make their research more reproducible and open. We will introduce the rrtools package, which is our specific contribution to help with the challenge of making reproducible research in archaeology easier. "Our" meaning in this case a group of people whose names you can see here and / or who took part in thethe 2017 Summer School on Reproducible Research in Landscape Archaeology at the Freie Universität Berlin (17-21 July), funded and jointly organized by Excellence Cluster 264 Topoi, the Collaborative Research Center 1266, and ISAAKiel under the guidance of Ben Marwick. 
 
-## Slide 2: Motivation
+## Slide: Motivation
 
 Our motivation for this topic comes from a profound change that we have been observing in how researchers analyse their data.
 
@@ -50,19 +54,19 @@ Increasingly, we are seeing researchers publishing research that uses a programm
 
 This is an important change away from using mouse-driven, point-and-click software for data analysis. When archaeologists use software such as SPSS and Past (as you see in our screenshots here), it is very difficult for them to share the details of their analysis. When readers cannot see the details of an analysis, it is difficult for them to be confident in the results described in an article. Also, for other researchers it may be near impossible to implement the described analysis in their own work as they lack the details on how to come to the desired conclusions. 
 
-## Slide 3: Outline
+## Slide: Outline
 
 In this presentation we will briefly review some data showing change in the use of programming languages in the sciences generally, and in archaeology in particular. We will look at citation data from thousands of journal articles that are available in the Web of Science database produced by Clarivate Analytics. We focus on the R programming language, because this is by far the most widely used langauge in archaeology. 
 
-Secondly, we will review a few case studies of how R is used by archaeologists, to show the potential that using a programming language has for opening and accelerating archaeological research. 
+Secondly, we will review how R is used by archaeologists, to show the potential that using a programming language has for opening and accelerating archaeological research. 
 
 Finally, we will briefly introduce our R package, rrtools, which is designed to simplify and standardise the process of using R for archaeology, and making research more open and reproducible. 
 
-##- Slide 4: Current uses of R [signpost slide only]
+## Slide: Current uses of R [signpost slide only]
 
-## Slide 5: Articles in all sciences citing R 
+## Slide: Articles in all sciences citing R 
 
-```{r all-sciences-citing-r, fig.height=10}
+```{r all-sciences-citing-r}
 
 # We did a 'Cited Reference Search' in WoS for title "R: A Language and Environment for Statistical Computing" and author = "R Core Team", which is the output from  `citation()`. This function first appeared in 2004 https://github.com/wch/r-source/commits/9a5c086855d2e8fb07f670e3315871b2de31a4fd/src/library/base/inst/CITATION 
 # 
@@ -143,7 +147,8 @@ ggplot(cran_cites_all_areas_top_journals_by_year,
   xlab("Publication year") +
   ylab("Percentage of articles in that journal") +
   theme_minimal() +
-  theme(legend.position="none") +
+  theme(legend.position="none",
+        axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) +
   ggtitle(str_glue('Percentage of articles per year citing R in top 10 WoS journals ({prettyNum(how_many_articles_in_top_journals_for_cran_cites,",")} articles)'),
           subtitle = "Data from apps.webofknowledge.com,\nusing in SCI-EXPANDED & SSCI for 2007-2017")
 
@@ -160,11 +165,11 @@ We got `r how_many_articles_in_top_journals_for_cran_cites` articles in our samp
 First, the areas of science that have seen big growth in the use of R are ecology, evolution and related biological sciences. This is especially significant for archaeologists, as ecology and biology are subjects from which they quite often adapt methods for analysis, as for example in point-pattern-analysis and statistical modelling. 
 We also see increases in multi-disciplinary journals such as PeerJ and PLOS One. 
 
-Second, the scale of the increases is quite impressive. We see many journals in our sample starting from less than 1% of articles citing R and now have around 20% of articles citing R. 
+**Second**, the scale of the increases is quite impressive. We see many journals in our sample starting from less than 1% of articles citing R and now have around 20% of articles citing R. 
 
 So, we can see this is a substantial change in the way researchers are working in many fields. What about archaeology? Do we also see a change like this?
 
-## Slide 6: Archaeology articles citing R
+## Slide: Archaeology articles citing R
 
 ```{r top-archaeology-journals-by-citations-of-r}
 
@@ -248,7 +253,7 @@ cran_cites_in_archy_journals_per_year <-
 min_y <- 2007
 max_y <- 2040
 
-library(ggpmisc)
+
 jas_cites_r <- 
 cran_cites_in_archy_journals_per_year %>% 
   filter(SO == "JOURNAL OF ARCHAEOLOGICAL SCIENCE") %>% 
@@ -311,15 +316,15 @@ ggsave(filename = "all_archaeology_citing_R_over_time.png",
 
 Here are the results for archaeological articles. We found `r archy_journals_total_number_of_citing_articles` articles that cite R over the last ten years. Note that this is certinaly not complete, since these are just for the journals tracked by the Web of Science database, and we know that archaeologists publish is a great variaty of journals.
 
-There are four important details in these plots:
+There are three important details in these plots:
 
-The first detail we see here is that overall, the proportions of articles citing R in archaeology are much smaller than what we see in the ecology journals on the previous slide. The absolute numbers of archaeology articles here are are also very low. Only the _Journal of Archaeological Science_ has more than 10 articles in our sample. We have yet to adopt programming for data analysis in the same way that ecologists have. 
+The **first** detail we see here is that overall, the proportions of articles citing R in archaeology are much smaller than what we see in the ecology journals on the previous slide. The absolute numbers of archaeology articles here are are also very low. Only the _Journal of Archaeological Science_ has more than 10 articles in our sample. We have yet to adopt programming for data analysis in the same way that ecologists have. 
 
-The second detail is that we do not see a significant increase over time, unlike the ecology journals that steeply increase over time. Both archaeology and the other sciences we saw on the previous slide show an increase in citing R at around 2013-2014, we do not yet see much of an upward trend in the archaeology journals. Indeed, the first citations of R in several archaeology journals only occured in the last two years. The plot on the upper right of this slide shows a statistical test of change over time for articles in JAS. With a low r-squared value and high p-value for the linear model, we conclude that there is no evidence for an increase in citations over time in this journal.  
+The **second** detail is that we do not see a significant increase over time, unlike the ecology journals that steeply increase over time. Both archaeology and the other sciences we saw on the previous slide show an increase in citing R at around 2013-2014, we do not yet see much of an upward trend in the archaeology journals. Indeed, the first citations of R in several archaeology journals only occured in the last two years. The plot on the upper right of this slide shows a statistical test of change over time for articles in JAS. With a low r-squared value and high p-value for the linear model, we conclude that there is no evidence for an increase in citations over time in this journal.  
 
-The fourth detail we see is the distinctive types of journals that have articles citing R. There is a clear focus on scientific archaeology, with _Journal of Archaeological Science_ having the highest total number of articles. Archaeology as a subject has always been situated between a humanistic and a scientific tradition, but studies using statistical methods lean towards the sciences, which we mean with the term "scientific archaeology". We also see geoarchaeology, lithics, and environmental archaeology represented in the journal names. We can investigate this further with statistical analysis of the words in the titles of all the articles in our sample.
+The **third** detail we see is the distinctive types of journals that have articles citing R. There is a clear focus on scientific archaeology, with _Journal of Archaeological Science_ having the highest total number of articles. Archaeology as a subject has always been situated between a humanistic and a scientific tradition, but studies using statistical methods lean towards the sciences, which we mean with the term "scientific archaeology". We also see geoarchaeology, lithics, and environmental archaeology represented in the journal names. We can investigate this further with statistical analysis of the words in the titles of all the articles in our sample.
 
-## Slide 7: What are archaeologists doing with R?
+## Slide: What are archaeologists doing with R?
 
 ```{r text-mining-article-titles-archaeology}
 # https://www.tidytextmining.com/twitter.html
@@ -331,7 +336,7 @@ The fourth detail we see is the distinctive types of journals that have articles
 # cran_cites_in_archy_journals
 
 # subtract ones citing R from ones that do not
-library(Hmisc)
+
 wc_archaeology_2007_to_2017_no_R_cites <- 
   wc_archaeology_2007_to_2017 %>% 
   filter(TI %nin% cran_cites_in_archy_journals$TI)
@@ -407,9 +412,11 @@ Here we see a comparison of word frequencies of the titles of archaeology journa
 
 This plot supports our initial observations from the journals titles, which is that archaeologists using R tend to be doing more scientific archaeology. We see that many words relating to stone artefacts, zooarchaeology, and geoarchaeology are more frequently used by R-using archaeologists. On the other hand, articles that do not cite R more often discuss the Neolithic and metal-age periods, and less often reflect a technical specialisation. 
 
-## Slide 8: The unrealised potential of R for reproducible research [signpost slide only]
+## Slide: The unrealised potential of R for reproducible research [signpost slide only]
 
-## Slide 9: The unrealised potential of R for reproducible research [signpost slide only]
+## Slide 9: The unrealised potential of R for reproducible research 
+
+![](../figures/Marwick et al Fig 3 screenshot from the RStudio program.png)
 
 We would now like to focus on a small sub-set of these papers using R, because they are doing something very interesting that we think all archaeologists doing data analysis also should be doing. This subset of papers are demonstrating the potential of R for open and reproducible research. 
 
@@ -419,7 +426,13 @@ When this R Markdown document is rendered, or converted to another format such a
 
 This is how R helps to make research reproducible - we have found that some archaeologists are writing their entire journal articles useing R Markdown, and they share their plain-text document along with their publication. This means that the reader can see all of the details of the data analysis, and all of the small decisions made along the way. Many of these decisions are too tedious to describe in the methods section of an article, but they can be important for evaluating the robustness of an anlaysis. These details are also important to know if we want to extend a published analysis onto a new set of data. 
 
-## Slide 10: An increasing number of archaeologists are publishing reproducible research 
+## Slide: Real-world example from Barton et al. 2018
+
+![](../figures/example-barton-et-al.png)
+
+Here is a real-world example R Markdown in use, from an archaeology article published earlier this year. 
+
+## Slide: An increasing number of archaeologists are publishing reproducible research 
 
 ```{r}
 archy_ctv_readme <- readLines(str_glue('{here::here()}/analysis/data/raw_data/ctv-archaeology-README.md'))
@@ -477,9 +490,11 @@ These `r number_of_reproducible_articles` articles in the subset of articles tha
 - making the R script files available with the publication
 - using R Markdown to add narrative text with the R code to give explanation and make it easier for readers to understand the analysis
 
-Articles that have these three characteristics are part of a new paradigm in scientific communication, and with these `r number_of_reproducible_articles` articles, we believe we have identified the beginning of this paradigm in archaeology. We think it will not be hard for archaeologists that already use R to make the transition to producing reproducible research by sharing their code and data. 
+Articles that have these three characteristics are part of a new paradigm in scientific communication, and with these `r number_of_reproducible_articles` articles, we believe we have identified the beginning of this paradigm in archaeology. We think it will not be hard for archaeologists that already use R to make the transition to producing reproducible research by sharing their code and data. If this can be achieved, then we can realise some of the potential that R has for making archaeology more open and reproducible. 
 
-## Slide 11: Our new package, rrtools, and how it helps
+## Slide: Our new package, rrtools, and how it helps
+
+![](../figures/rrtools-steps-carbon.png)
 
 As we studied the papers in our sample, we looked for common approaches to making and organising the code and data files. We found that there were few common standards used by archaeologists in making their work reproducible. There was a great variety of information presented in the code and data files. Some papers include code that will generate every figure and numer in the text, while other papers only include code to produce one or two key figures in the paper. 
 
@@ -489,37 +504,54 @@ So, after looking at the reproducible articles in archaeology, and the best prac
 
 On this slide we show the typical use of the key functions in rrtools that a researcher would use to quickly set up a compendium suitable for writing reproducible research in R. Each of these steps reflects a best practice that we've noted in our review of the literature:
 
-- use_compendium:  This function creates a new directory for the research project, and creates in R package within this directory. We use the R package structure as the standard for our directory because it is widely recognised by R users. This means that people know where to look for code, where to look for data, and where to look for dependancies and other information.     
-- usethis::use_mit_license: This function creates a copy of the MIT software lisence to the compendium. This is important for two reasons. First, because it tells the reader that the author is happy for their code to be reused by other people. And second, it tells the reader that the author does not take responsibility for any problems that the reader might have when they use the code. This is important for setting the expectations about the relationship between the author and the reader, regarding the use of code.     
-- devtools::use_github:  This will initiate the use of the Git version control system. This is the current state-of-the-art for version control of any kind of plain text file, including text, code, data, and images. This will also create a repository on the GitHub website. Using version control is important because it allows the author to time-travel back to earlier states of their analysis, if they take a dead-end path. It is also important for making collaboration smooth because many people can work on one set of files without losing track of what the most recent version is. Plus it is nice to have a remote back-up of our work in case of an emergency. The GitHub repository can be kept private if desired, until the work is published.     
-- use_readme_rmd:  This will create a simple document that is usually the first thing a reader sees when they browse the code files. This document is important because it helps to describe to the reader what to expect in the compendium, and it gives details of how to cite the compendium.     
-- use_analysis:  This function creates a set of folders according to the best practices for organising a typical reasearch project. We recognise that this file structure wont be perfect for every project. But we know that it will suit many projects quite well, and it will at least make the user think about how to organise their files logically, and according to best practises. On the next slide we can see the folders that this fucntion creates:
+- **use_compendium:**  This function creates a new directory for the research project, and creates in R package within this directory. We use the R package structure as the standard for our directory because it is widely recognised by R users. This means that people know where to look for code, where to look for data, and where to look for dependancies and other information.     
+- **usethis::use_mit_license:** This function creates a copy of the MIT software lisence to the compendium. This is important for two reasons. First, because it tells the reader that the author is happy for their code to be reused by other people. And second, it tells the reader that the author does not take responsibility for any problems that the reader might have when they use the code. This is important for setting the expectations about the relationship between the author and the reader, regarding the use of code.     
+- **devtools::use_github:**  This will initiate the use of the Git version control system. This is the current state-of-the-art for version control of any kind of plain text file, including text, code, data, and images. This will also create a repository on the GitHub website. Using version control is important because it allows the author to time-travel back to earlier states of their analysis, if they take a dead-end path. It is also important for making collaboration smooth because many people can work on one set of files without losing track of what the most recent version is. Plus it is nice to have a remote back-up of our work in case of an emergency. The GitHub repository can be kept private if desired, until the work is published.     
+- **use_readme_rmd:**  This will create a simple document that is usually the first thing a reader sees when they browse the code files. This document is important because it helps to describe to the reader what to expect in the compendium, and it gives details of how to cite the compendium.     
+- **use_analysis:**  This function creates a set of folders according to the best practices for organising a typical reasearch project. We recognise that this file structure wont be perfect for every project. But we know that it will suit many projects quite well, and it will at least make the user think about how to organise their files logically, and according to best practises. On the next slide we can see the folders that this function creates:    
 
-## Slide 12: The best-practice directory structure from rrtools
+## Slide: The best-practice directory structure from rrtools
 
-Here is the file structure the rrtools gives us. We wont discuss it in detail, except to point out two important principles that it enforces:
+![](../figures/rrtools-analysis-dir.png)
+
+Here is the file structure the rrtools gives us. There isn't time here to discuss it in detail, except to point out two important principles that it enforces:
 
 - Keep the data separate from the methods. This means keep the code in a separate directory to the data    
 - Keep the raw data seprate from data that is created or derived during the analysis. 
 
 These two fundamental principles make it easy to stay organised during a complicated project, and make it easier for a reader to navigate their way through the compendium. 
 
-## Slide 13: Advanced reproducibility with rrtools
+## Slide: Advanced reproducibility with rrtools
 
-The last three functions that rrtools gives us are advanced topics that we only summarise briefly here.  ...
+![](../figures/rrtools-steps-carbon.png)
 
+The last three functions that rrtools gives us are advanced topics that we summarise only very briefly here.  
 
+- **use_dockerfile:** This function generates a configuration file that allows another user to recreate the computational environment of the original author. This is important for complex projects that have many pieces of software that might be difficult to install correctly. Sometimes when a piece of software is updates, its behaviour can change, which can alter the results of an analysis. This function helps to protect again this problem.    
+- **use_travis:** This function will create a configuration file so that our compendium can be automatically checked each time we update it. This is especially useful when working with collaborators because it helps to identify problems in the analysis before they become too big.    
+- **use_testthat:** This creates a template for adding tests for any custom functions used in the analysis. This is important so we can ensure that the functions perform as expected while we work on the anlysis.    
 
+These three functions are very widely used in software engineering to give quality control to a package. With our rrtools package we have brought these tools into a research context where they can help researchers to make their analyses easy to work on and easy for others reproduce. 
 
+## Slide: Summary
 
+To summarise:    
 
+- We have shown a bibliometric analysis that reveals substantial change in the use of the R programming languages in the sciences generally. We saw that ecological and evolutionary sciences have really embraced R in their publications.      
 
+- We have also shown that archaeologists have more recently taken up R, but to a much lesser degree, so far, than what we see in the other fields. We've seen that the use of R is most common in more scientific aspects of archaeology.     
 
+- We also identified a small sub-set of archaeology papers that use R to make their work fully reproducible. There is a lot of potential for other archaeologists to make their work reproducible, and we think this would be a good thing for archaeology generally.    
 
+- We have presented our freely available R package, rrtools, which is designed to make it easy for researchers in archaeology and other fields to make their research reproducible. We hope this will help to realise some of the potential to make archaeological research more open and reproducible.       
 
-
+Thank you. 
 
 # Acknowledgements
+
+The rrtools project was developed during the 2017 Summer School on Reproducible Research in Landscape Archaeology at the Freie Universität Berlin (17-21 July), funded and jointly organized by Exc264 Topoi, CRC1266, and ISAAKiel. 
+
+Thanks to Daniel Knitter, Patrick Kennedy, Nils Müller-Scheeßel, Martin Hinz, Clemens Schmid, Ricarda Braun, Wojciech Francuzik for their contributions to the package.
 
 <!-- The following line inserts a page break when the output is MS Word. For page breaks in PDF, use \newpage on its own line.  -->
 ##### pagebreak
