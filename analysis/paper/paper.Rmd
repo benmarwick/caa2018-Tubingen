@@ -147,7 +147,6 @@ ggplot(cran_cites_all_areas_top_journals_by_year,
     segment.color = NA,
     direction = "y"
   ) +
-   annotate("text", x=2019, y=-0.01, label= "n = 50380") +
    scale_x_continuous(breaks = min_y:max_y,
                      labels = c(min_y:2017, rep("", length(2018:max_y))),
                      limits = c(min_y, max_y)) +
