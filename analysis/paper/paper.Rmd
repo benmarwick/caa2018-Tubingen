@@ -62,7 +62,7 @@ This is an important change away from using mouse-driven, point-and-click softwa
 
 _Outline_
 
-In this presentation we will briefly review some data showing change in the use of programming languages in the sciences generally, and in archaeology in particular. We will look at citation data from thousands of journal articles that are available in the Web of Science database produced by Clarivate Analytics. We focus on the R programming language, because this is by far the most widely used language in archaeology. 
+In this presentation we will briefly review some data showing change in the use of programming languages in the sciences generally, and in archaeology in particular. We focus on the R programming language, because this is by far the most widely used language in archaeology. 
 
 Secondly, we will review how R is used by archaeologists, to show the potential that using a programming language has for opening and accelerating archaeological research. 
 
@@ -167,11 +167,11 @@ ggsave(filename = "all_sciences_citing_R_over_time.png",
        width = 9)
 ```
 
-This plot shows how data analysis is changing in the sciences more broadly towards the use of the R programming language. We searched the Web of Science for citations to the R program over the last ten years, and filtered the results to the top ten journals with the highest number of citations to this software. The purpose of this filtering step was to find areas of research were R is generally known, so we can see how its use is changing over time. Note that many articles that use R do not cite the R program, so these numbers underestimate the true use of R in science. 
+This plot shows how data analysis is changing in the sciences more broadly towards the use of the R programming language. We searched the Web of Science, produced by Clarivate Analytics, for citations to the R program over the last ten years, and filtered the results to the top ten journals with the highest number of citations to this software. The purpose of this filtering step was to find areas of research were R is generally known, so we can see how its use is changing over time. Note that many articles that use R do not cite the R program, so these numbers underestimate the true use of R in science. 
 
 We can make two major observations: 
 
-**First**, the areas of science that have seen big growth in the use of R are ecology, evolution and related biological sciences. This is especially significant for archaeologists, as ecology and biology are subjects from which we quite often adapt methods for analysis, as for example in point-pattern-analysis and statistical modelling. 
+**First**, the areas of science that have seen big growth in the use of R are ecology, evolution and related biological sciences. This is especially significant for us archaeologists, as ecology and biology are subjects from which we quite often adapt methods for analysis, as for example in point-pattern-analysis and statistical modelling. 
 We also see increases in multi-disciplinary journals such as PeerJ and PLOS One. 
 
 **Second**, the scale of the increases is quite impressive: Starting only 2012 some journals now have 20% of articles citing R. 
@@ -323,13 +323,13 @@ ggsave(filename = "all_archaeology_citing_R_over_time.png",
        width = 10)
 ```
 
-Here are the results for archaeological articles. We found `r archy_journals_total_number_of_citing_articles` articles that cite R over the last ten years. Note that this is certainly not complete, since these are just for the journals tracked by the Web of Science database, and we know that archaeologists publish is a great variety of journals.
+Here are the results for archaeological articles. We found `r archy_journals_total_number_of_citing_articles` articles that cite R over the last ten years. Note that this is certainly not complete, since these are just the journals tracked by the Web of Science database, and we know that archaeologists publish in a great variety of journals.
 
 There are three important details in these plots:
 
 The **first** detail we see here is that overall, the proportions and the absolute number of articles citing R in archaeology are much smaller than what we see in the ecology journals on the previous slide. Only the _Journal of Archaeological Science_ has more than 10 articles in our sample. It's obvious, we have yet to adopt programming for data analysis in the same way that ecologists have. 
 
-The **second** detail is that we do not see a significant increase over time. Both archaeology and the other sciences we saw on the previous slide show an increase in citing R at around 2013-2014, but we do not yet see much of an upward trend in the archaeology journals in contrast to the ecology journals. Indeed, in several archaeology journals the first citations of R only occured in the last two years. The plot on the upper right of this slide shows a statistical test of change over time for articles in JAS. With a low r-squared value and high p-value for the linear model, we conclude that there is no evidence for an increase in citations over time in this journal.  
+The **second** detail is that we do not see a significant increase over time. Both archaeology and the other sciences we saw on the previous slide show an increase in citing R at around 2013-2014, but we do not yet see much of an upward trend in the archaeology journals. Indeed, in several of our journals the first citations of R only occured in the last two years. The plot on the upper right of this slide shows a statistical test of change over time for articles in JAS. With a low r-squared value and high p-value for the linear model, we conclude that there is no evidence for an increase in citations over time in this journal.  
 
 The **third** detail we see is the distinctive types of journals that have articles citing R. There is a clear focus on scientific archaeology, with _Journal of Archaeological Science_ having the highest total number of articles. Archaeology as a subject has always been situated between a humanistic and a scientific tradition, but studies using statistical methods lean towards the sciences, which we mean with the term "scientific archaeology". We also see geoarchaeology, lithics, and environmental archaeology represented in the journal names. We can investigate this further with statistical analysis of the words in the titles of all the articles in our sample.
 
@@ -416,9 +416,9 @@ ggsave(filename = "archaeology_articles_word_freqs.png",
        width = 9)
 ```
 
-Here we see a comparison of word frequencies of the titles of archaeology journal articles. Words near the red line are used with about equal frequencies by papers that cite R and by papers that do not cite R. Words far away from the red line are used much more by one group of articles compared to the other. Words that appear in this plot are ones that have been used at least once in article titles of both groups.
+Here we see a comparison of word frequencies of the titles of archaeology journal articles. Words near the red line are used with about equal frequencies by papers that cite R and by papers that do not cite R. Words far away from the red line are used much more by one group of articles compared to the other. 
 
-This plot supports our initial observations from the journals' titles, which is that archaeologists using R tend to be doing more scientific archaeology. We see that many words relating to stone artefacts, zooarchaeology, and geoarchaeology are more frequently used by R-using archaeologists. On the other hand, articles that do not cite R more often discuss the Neolithic and metal-age periods, and less often reflect a technical specialisation. 
+This plot supports our initial observations: archaeologists using R tend to be doing more scientific archaeology. We see that many words relating to stone artefacts, zooarchaeology, and geoarchaeology are more frequently used by R-using archaeologists. On the other hand, articles that do not cite R more often discuss the Neolithic and metal-age periods, and less often reflect a technical specialisation. 
 
 ## Slide: The unrealised potential of R for reproducible research [signpost slide only]
 After this overview how R is being used at the moment, we want to focus on the possibilities of making research reproducible using R.
@@ -511,10 +511,9 @@ So, after looking at the reproducible articles in archaeology, and the best prac
 
 ![](../figures/rrtools-steps-carbon.png)
 
+On this slide we show the typical use of the key functions in rrtools that a researcher would use to quickly set up a compendium suitable for writing reproducible research in R. Each of these steps reflects a best practice that we've noted in our review of the literature. We will focus now on the first five:
 
-On this slide we show the typical use of the key functions in rrtools that a researcher would use to quickly set up a compendium suitable for writing reproducible research in R. Each of these steps reflects a best practice that we've noted in our review of the literature:
-
-- **use_compendium:**  This function creates a new directory for the research project, and creates in R package within this directory. We use the R package structure as the standard for our directory because it is widely recognised by R users. This means that people know where to look for code, where to look for data, and where to look for dependancies and other information.     
+- **use_compendium:**  This function creates a new directory for the research project, and creates an R package within this directory. We use the R package structure as the standard for our directory because it is widely recognised by R users. This means that people know where to look for code, where to look for data, and where to look for dependancies and other information.     
 - **usethis::use_mit_license:** This function creates a copy of the MIT software lisence to the compendium. This is important for two reasons. First, because it tells the reader that the author is happy for their code to be reused by other people. And second, it tells the reader that the author does not take responsibility for any problems that the reader might have when they use the code. This is important for setting the expectations about the relationship between the author and the reader, regarding the use of code.    
 - **devtools::use_github:**  This will initiate the use of the Git version control system. This is the current state-of-the-art for version control of any kind of plain text file, including text, code, data, and images. This will also create a repository on the GitHub website. Using version control is important because it allows the author to time-travel back to earlier states of their analysis, if they take a dead-end path. It is also important for making collaboration smooth because many people can work on one set of files without losing track of what the most recent version is. Plus it is nice to have a remote back-up of our work in case of an emergency. The GitHub repository can be kept private if desired, until the work is published.     
 - **use_readme_rmd:**  This will create a simple document that is usually the first thing a reader sees when they browse the code files. This document is important because it helps to describe to the reader what to expect in the compendium, and it gives details of how to cite the compendium.     
@@ -527,11 +526,10 @@ On this slide we show the typical use of the key functions in rrtools that a res
 Here is the file structure the rrtools gives us. For now, we want to point out two important principles that it enforces:
 
 - Keep the data separate from the methods. This means keep the code in a separate directory to the data    
-- Keep the raw data seprate from data that is created or derived during the analysis. This will help you in *never* overwriting your raw data.  
+- Keep the raw data seprate from data that is created or derived during the analysis. 
 
 These two fundamental principles make it easy to stay organised during a complicated project, and make it easier for a reader to navigate their way through the compendium. 
 
-Included in the package are some more advanced functions that we will discuss more at another time. 
 
 ## Slide: Summary
 
