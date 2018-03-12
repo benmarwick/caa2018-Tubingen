@@ -22,8 +22,6 @@ knitr::opts_chunk$set(
   echo = FALSE,
   cache = TRUE,
   comment = "#>",
-  fig.height=5,
-  fig.width=5,
   fig.path = "../figures/"
 )
 
@@ -132,6 +130,7 @@ cran_cites_all_areas_top_journals_by_year <-
 
 min_y <- 2007
 max_y <- 2025
+all_sciences_citing_R_over_time <- 
 ggplot(cran_cites_all_areas_top_journals_by_year,
        aes(PY,
            prop,
@@ -160,10 +159,13 @@ ggplot(cran_cites_all_areas_top_journals_by_year,
           subtitle = "Data from apps.webofknowledge.com,\nusing in SCI-EXPANDED & SSCI for 2007-2017")
 
 
-ggsave(filename = "all_sciences_citing_R_over_time.png",
+ggsave(plot = all_sciences_citing_R_over_time, 
+       filename = "all_sciences_citing_R_over_time.png",
        path = str_glue('{here::here()}/analysis/figures'),
        height = 5,
        width = 9)
+
+knitr::include_graphics(str_glue('{here::here()}/analysis/figures/all_sciences_citing_R_over_time.png'))
 ```
 
 This plot shows how data analysis is changing in the sciences more broadly towards the use of the R programming language. We searched the Web of Science, produced by Clarivate Analytics, for citations to the R program over the last ten years, and filtered the results to the top ten journals with the highest number of citations to this software. The purpose of this filtering step was to find areas of research were R is generally known, so we can see how its use is changing over time. Note that many articles that use R do not cite the R program, so these numbers underestimate the true use of R in science. 
@@ -288,6 +290,8 @@ cran_cites_in_archy_journals_per_year %>%
   ggtitle(expression(paste("Articles citing R in ", italic("Journal of Archaeological Science")))) +
   theme_bw(base_size = 6)
   
+
+all_archaeology_citing_R_over_time <- 
 ggplot(cran_cites_in_archy_journals_per_year,
        aes(PY,
            prop,
@@ -316,10 +320,13 @@ ggplot(cran_cites_in_archy_journals_per_year,
                           xmin = 2030, xmax = 2040, 
                           ymin = 0.10, ymax = 0.17)
 
-ggsave(filename = "all_archaeology_citing_R_over_time.png",
+ggsave(plot = all_archaeology_citing_R_over_time, 
+       filename = "all_archaeology_citing_R_over_time.png",
        path = str_glue('{here::here()}/analysis/figures'),
        height = 6,
        width = 10)
+
+knitr::include_graphics(str_glue('{here::here()}/analysis/figures/all_archaeology_citing_R_over_time.png'))
 ```
 
 Here are the results for archaeological articles. We found `r archy_journals_total_number_of_citing_articles` articles that cite R over the last ten years. Note that this is certainly not complete, since these are just the journals tracked by the Web of Science database, and we know that archaeologists publish in a great variety of journals.
@@ -349,12 +356,6 @@ The **third** detail we see is the distinctive types of journals that have artic
 wc_archaeology_2007_to_2017_no_R_cites <- 
   wc_archaeology_2007_to_2017 %>% 
   filter(TI %nin% cran_cites_in_archy_journals$TI)
-
-# we have a very skewed sample, so let's match 
-cran_cites_in_archy_journals_lots <- 
-  cran_cites_in_archy_journals %>% 
-  sample_n(nrow(wc_archaeology_2007_to_2017_no_R_cites),
-           replace = TRUE)
 
 # combine
 archy_journal_articles <- 
@@ -387,7 +388,7 @@ frequency <- frequency %>%
   spread(ID, freq) %>%
   arrange(no_R_cites, has_R_cites)
 
-
+archaeology_articles_word_freqs <- 
 ggplot(frequency, 
        aes(no_R_cites, 
            has_R_cites)) +
@@ -407,12 +408,15 @@ ggplot(frequency,
   theme_minimal(base_size = 16) +
   xlab("Articles that do not cite R") +
   ylab("Articles that cite R") +
-  ggtitle("Comparing the frequency of words used in archaeology articles")
+  ggtitle(str_glue("Comparing the frequency of words used in titles \nof archaeology articles ({prettyNum(nrow(frequency), ',')} words in {prettyNum(nrow(archy_journal_articles), ',')} articles)"))
 
-ggsave(filename = "archaeology_articles_word_freqs.png",
+ggsave(plot = archaeology_articles_word_freqs, 
+       filename = "archaeology_articles_word_freqs.png",
        path = str_glue('{here::here()}/analysis/figures'),
        height = 9,
        width = 9)
+
+knitr::include_graphics(str_glue('{here::here()}/analysis/figures/archaeology_articles_word_freqs.png'))
 ```
 
 Here we see a comparison of word frequencies of the titles of archaeology journal articles. Words near the red line are used with about equal frequencies by papers that cite R and by papers that do not cite R. Words far away from the red line are used much more by one group of articles compared to the other. 
@@ -465,6 +469,7 @@ archy_ctv_readme_20XX <- archy_ctv_readme_20XX[archy_ctv_readme_20XX > 2010]
 
 number_of_reproducible_articles <- length(archy_ctv_readme_20XX)
 
+archaeology_articles_r_reproducible <- 
 ggplot(data_frame(archy_ctv_readme_20XX,
                   top_archy_journal_names),
        aes(archy_ctv_readme_20XX,
@@ -484,10 +489,13 @@ ggplot(data_frame(archy_ctv_readme_20XX,
   xlab("Year of publication") +
   ylab("Number of articles")
 
-ggsave(filename = "archaeology_articles_r_reproducible.png",
+ggsave(plot = archaeology_articles_r_reproducible, 
+       filename = "archaeology_articles_r_reproducible.png",
        path = str_glue('{here::here()}/analysis/figures'),
        height = 9,
        width = 9)
+
+knitr::include_graphics( str_glue('{here::here()}/analysis/figures/archaeology_articles_r_reproducible.png'))
 ```
 
 In our sample of R citing archaeology articles, we identified `r number_of_reproducible_articles` articles that include R script- and data files, either in the supplementary materials or in a trustworthy data repository. This plot shows that although this number is small, it is increasing, suggesting the beginning of a new approach to how archaeologists share their research.
