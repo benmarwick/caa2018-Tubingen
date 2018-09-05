@@ -5,10 +5,9 @@ author:
   - Ben Marwick
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: 
-    bookdown::html_document2:
-      number_sections: false
+    bookdown::word_document2:
       fig_caption: yes
-      reference_docx: "../templates/template.docx" # Insert path for the DOCX file
+      reference_docx: "../templates/template.docx" 
 ---
 
 
@@ -19,7 +18,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   warning = FALSE,
   message = FALSE,
-  echo = FALSE,
+  echo = TRUE,
   cache = TRUE,
   comment = "#>",
   fig.path = "../figures/"
