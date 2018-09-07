@@ -37,7 +37,8 @@ library(Hmisc)
 
 # Introduction
 
-In this paper we investigate recent changes in the way archaeology is being done, especially the computational aspects. 
+In this paper we investigate recent changes in the way computational archaeology is being done. Revolutions or paradigm-shifts in archaeology have been discussed to happen following theoretical discurses[@clark_1993; @härke_2002], but there has been
+an argument in philosophy of science whether revolutions in science are either ideas-driven or tool-driven [@galison_1997; @dyson_2000]. In this light we explore how many scientific disciplines have started to embrace methods to improve the reproducibility of their research and whether this change is part of a paradigm-shift. We focus on one set of tools for this change which is based on writing scripts in free and open source programming languages and review bibliometric evidence for this change in the sciences generally and in archaeology in particular. We evaluate how computational approaches to improving reproducibility and transparency in archaeology are mediated and transformed by digital approaches and test if the adoption of these new tools may be considered a revolution or some other process. 
 
 [need some more in here]
 
