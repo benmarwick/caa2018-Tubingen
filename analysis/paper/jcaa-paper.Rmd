@@ -9,6 +9,7 @@ output:
       number_sections: false
       fig_caption: yes
       reference_docx: "../templates/template.docx" # Insert path for the DOCX file
+bibliography: references.bib
 abstract: "There is an argument in philosophy of science that revolutions in science are either ideas-driven or tool-driven. We explore this debate in light of recent efforts by many scientific disciplines to embrace methods to improve the reproducibility of their research. One of the most profound changes driven by this concern for reproducibility and transparency is from analysing data using tools dependent on pointing-and-clicking with a mouse in commercial software, to a new set of tools based on writing scripts in free and open source programming languages. We review bibliometric evidence for this change in the sciences generally and in archaeology in particular to test if the adoption of these new tools may be considered a revolution or some other process. We evaluate how computational approaches to improving reproducibility and transparency in archaeology are mediated and transformed by digital approaches."
 ---
 
@@ -34,7 +35,6 @@ library(ggpmisc)
 library(Hmisc)
 ```
 
-
 # Introduction
 
 In this paper we investigate recent changes in the way archaeology is being done, especially the computational aspects. 
@@ -45,7 +45,7 @@ In this paper we investigate recent changes in the way archaeology is being done
 
 There is an argument among philosophers of science that revolutions in science are either ideas-driven or tool-driven. One of the most widely-known models of ideas-driven change in science is Kuhn's [-@Kuhn_1962] effort to describe the history of science by proposing paradigm shifts resulting from revolutionary change in communities of researchers. In brief, this model proposes that the history of science consists of long periods of tradition-bound 'normal science' punctuated by short episodes of revolution. Normal science was described by Kuhn as stagnant, routine day-to-day research focused on 'puzzle solving'. What counts as suitable puzzles, and acceptable solutions to these puzzles, is governed by the norms and procedures of the prevailing paradigm. Revolutions in science occur as punctuations in the equilibria of normal science, when anomalous observations culminate in changes that replace one paradigm with another in a conversion or speciation process where the community adopts a new way of doing science. There has been substantial debate about how to draw a clear distinction between so-called normal and revolutionary science. [@watkins1970against; @toulmin1970does; @Casadevalle00158_16]. A notable criticism is that Kuhn's normal science is unscientific, a situation where critical science had contracted into defensive metaphysics resulting from the domination of a ruling dogma [@popper1970]. This is at odds with a view of science that it is in a continuous state of revolution, with researchers simultaneously employing several styles of thinking and doing science, and continuously confronting theory with evidence and modifying their ideas based on the outcome. In this view, based on the post-World War II era of science, radical discontinuities are rare, and major developments instead emerge from the division and recombination of already mature fields [@andersen2013second]. Given the rarity of radical discontinuities, some biologists have argued that change in biology is better characterised by new ideas (e.g. Mendelian heredity, Darwinian evolution, and molecular genetics) replacing not a former paradigm but a conceptual vacuum [@wilkins1996are]. 
 
-In archaeology we have seen claims for paradigm shifts in several areas. The most wide-ranging application is Clark's [-@Clark_1993] comparison of North American archaeology to European archaeology during the 1970s-90s. Clark, similar to Binford and Sabloff [-@binford1982paradigms], identified the North American archaeological paradigm as rooted in anthropology, founded on post-positivist biases, and distinctive with it critical-realist ontology, a modified-objectivist epistemology, and an experimental-manipulative methodology. In contrast, the European archaeological paradigm is described a kind of history, mostly in a strict empiricist tradition, and typified by a realist ontology, an inductivist epistemology, and by an observational methodology. Clark's analysis describes a multi-paradigm situation where multiple research communities (i.e. North American and European) simutaneously operate in different paradigms (which Kuhn noted as a sign of a immature discipline). His account is not a complete Kuhnian analysis because it lacks a revolutionary change event where one paradigm is replaced by another, although he hints that processual archaeology may be considered a radical discontinuity relative to the culture-historical approaches that preceeded it [@Clark_1993, pp. 206]. 
+In archaeology we have seen claims for paradigm shifts in several areas. The most wide-ranging application is Clark's [-@Clark_1993] comparison of North American archaeology to European archaeology during the 1970s-90s. Clark, similar to Binford and Sabloff [-@binford1982paradigms], identified the North American archaeological paradigm as rooted in anthropology, founded on post-positivist biases, and distinctive with it critical-realist ontology, a modified-objectivist epistemology, and an experimental-manipulative methodology. In contrast, the European archaeological paradigm is described a kind of history, mostly in a strict empiricist tradition, and typified by a realist ontology, an inductivist epistemology, and by an observational methodology. Clark's analysis describes a multi-paradigm situation where multiple research communities (i.e. North American and European) simutaneously operate in different paradigms (which Kuhn noted as a sign of a developing or immature discipline). His account is not a complete Kuhnian analysis because it lacks a revolutionary change event where one paradigm is replaced by another, although he hints that processual archaeology may be considered a radical discontinuity relative to the culture-historical approaches that preceeded it [@Clark_1993, pp. 206]. 
 
 A more thorough treatment of the claim that processual archaeology was a paradigm shift is provided by @Meltzer_1979. Meltzer reviews literature arguing for a revolutionary change in archaeology during the 1960s and 1970s, and considers these claims in light of classic Kuhnian revolutionary events such as the replacement of the Ptolemaic system by the Copernican system, and Newtonian dynamics by the new Einsteinian dynamics. He finds that the changes that occured in Anglophone archaeology after the 1960s were incremental, and primarily of method, rather than a widespread replacement of one ontological structure by another one, incommensurable or incompatible with the former. Trigger [-@Trigger_2006, pp. 538] came to a similar conclusion at the end of his broad survey of the history of archaeology, that changes throughout archaeology have been mostly additive with only partial replacement. 
 
@@ -59,51 +59,60 @@ Galison's emphasis on tool-driven change, as a complement to Kuhnian concept-dri
 
 # Bibliometric analysis of tool-driven change
 
+## Looking back on a tool-driven change in Ecology
+
 The question of predicting or generating change in scientific practice via adoption of new tools is especially intruiging, and in this section we explore how a change in ecology might be relevant for understanding the future of archaeology. @Touchon_McCoy_2016 investigated evaluated changes in statistics used by ecologists as a potential area of tool-driven change. They searched nearly 20,000 published articles in ecology published between 1990 and 2013. They found that there has been a rise in complex and computationally intensive statistical techniques such as mixed effects models and Bayesian statistics and a decline in reliance on approaches such as ANOVA or t-tests. Crucially, they found that ecologists have shifted away from software tools such as SAS and SPSS to the open source program R.
 
-@Touchon_McCoy_2016 identify four factors relating to technological change that might explain the changes they observed in the use of statistics in ecology. First, they note that automated data loggers, GPS trackers, remote sensing, and crowd sourcing have greatly increased rate at which ecologists collect data. Second, increases in desktop and cluster computing power has made complex analytical processes faster and more convienent to compute. Third, the developme of free, open source and easily extensible software such as R allows new methods to spread quickly via online fora and social media
+@Touchon_McCoy_2016 identify four factors relating to technological change that might explain the changes they observed in the use of statistics in ecology. First, they note that automated data loggers, GPS trackers, remote sensing, and crowd sourcing have greatly increased rate at which ecologists collect data. Second, increases in desktop and cluster computing power has made complex analytical processes faster and more convienent to compute. Third, the development of free, open source and easily extensible software for data analysis and visualisation, such as R, allows new methods to spread quickly via online fora and social media. Fourth, the publication of several books and papers that have strongly influenced the way many ecologists think about data analysis, such as @burnham2003model's book on model selection and inference. 
 
+While all of these four factors could be considered relevant to the tooling of ecology and archaeology, we focus here on the third one because of its relevance to archaeology. Archaeology and ecology each have a high diversity of data collection methods, and types of data analyses they conduct, with only a small overlap. What they share in common is working with the field-collected data on a computer to prepare it for publication. To investigate changes in the use of R in archaeology and ecology, we obtained reference lists from a sample of scholarly articles in the Web of Science database and examined patterns in the citation of the R program over time. 
 
-
-there has been a rise in powerful desktop and supercomputing available to anyone in a university setting. Third, and partly as a result of the increase in computing power available, there has been an explosion in new analytical techniques (e.g., Pinheiro and Bates 2000, Gelman and Hill 2006, McCarthy 2007, Bolker 2008, Legendre and Legendre 2012). The rise of powerful, freely available, open source analytical software like R (R Development Core Team 2013) and associated wiki's, blogs, and listservs where users consult with specialists and find code written by ecologists for ecologists allows the powerful combination of new methods and large data sets to be harnessed by us all. This process has democratized statistical inference, giving the average ecologist the power to conduct analyses previously reserved only for statisticians. Although the analyses that one can conduct in R are often achievable in a program like SAS, the community of ecologist statisticians using R has proliferated rapidly and may be driving change in techniques we document here (although it is admittedly impossible to tease apart cause and effect in this case). This community of users, who share code and advice about analyses, has enabled a great number of ecologists to conduct advanced analyses on their data. Indeed, the flexible nature of statistical programming is what allows those so inclined to “roll their own” statistics. Furthermore, the fact that R and other open source software is free has empowered a global community of users, including those in developing nations that may not have access to commercial costly programs. The fourth and final factor driving the change in statistical practices is that a number of seminal books and papers have fundamentally changed the way many people think about data analyses. To give just one example, Burnham and Anderson's (2002) book on model selection and inference has been cited nearly 30,000 times since its publication in 2002 according to Google Scholar (website accessed 8 December 2015).
-
-
-
-We explore this debate in light of recent efforts by many scientific disciplines to embrace methods to improve the reproducibility of their research. One of the most profound changes driven by this concern for reproducibility and transparency is from analysing data using tools dependent on pointing-and-clicking with a mouse in commercial software, to a new set of tools based on writing scripts in free and open source programming languages...  
-
-# Tool-adoption in archaeology and elsewhere
-
-We review bibliometric evidence for this change in the sciences generally and in archaeology in particular to test if the adoption of these new tools may be considered a revolution or some other process. We evaluate how computational approaches to improving reproducibility and transparency in archaeology are mediated and transformed by digital approaches.
-
-# Discussion
-
-rrtools... huskydown
-
-special role of archaeology here, since we are concerned about past behaviours, we have a special interest in research leaving  a visible trace of our work
-
-# Conclusion
-
-
-
-## Acknowledgements
-
-Our project comes from the group who took part in the 2017 Summer School on Reproducible Research in Landscape Archaeology at the Freie Universität Berlin (17-21 July), funded and jointly organized by Excellence Cluster 264 Topoi, the Collaborative Research Center 1266, and ISAAKiel. 
-
-## Slide: Articles in all sciences citing R 
-
-```{r all-sciences-citing-r}
+```{r ecology-citing-r}
 
 # We did a 'Cited Reference Search' in WoS for title "R: A Language and Environment for Statistical Computing" and author = "R Core Team", which is the output from  `citation()`. This function first appeared in 2004 https://github.com/wch/r-source/commits/9a5c086855d2e8fb07f670e3315871b2de31a4fd/src/library/base/inst/CITATION 
 # 
 # Note that before 2012 the authors were "R Development Core Team", and then it was simplified to "R Core Team" https://github.com/wch/r-source/commit/9a5c086855d2e8fb07f670e3315871b2de31a4fd#diff-80bb8a8b133a6204e9642d76791927e2
 # 
 # This is our exact search string for WoS:
-# 
-# You searched for: CITED AUTHOR: ("R DEV COR TEAM" OR "R CORE" OR "R CORE TEAM") AND CITED WORK: ("R: A Language and Environment for Statistical Computing") AND LANGUAGE: (English) AND DOCUMENT TYPES: (Article)
-# Timespan: All years. Indexes: SCI-EXPANDED, SSCI, A&HCI, ESCI.
+
+# Results: 38,040
+# (from Web of Science Core Collection)
+# You searched for: CITED AUTHOR: ("R DEV COR TEAM" OR "R # CORE" OR "R CORE TEAM" OR "R DEVELOPMENT CORE TEAM")
+# Refined by: DOCUMENT TYPES: ( ARTICLE ) AND LANGUAGES: ( ENGLISH ) AND RESEARCH AREAS: ( ENVIRONMENTAL SCIENCES ECOLOGY )
+# Timespan: 1900-2018. Indexes: SCI-EXPANDED, SSCI, A&HCI, # ESCI.
+
+# field tags
+# TS= Topic 
+# TI= Title 
+# AU= Author [Index] 
+# AI= Author Identifiers 
+# GP= Group Author [Index] 
+# ED= Editor 
+# SO= Publication Name [Index] 
+# DO= DOI 
+# PY= Year Published 
+# AD= Address 
+# OG= Organization-Enhanced [Index] 
+# OO= Organization 
+# SG= Suborganization 
+# SA= Street Address 
+# CI= City 
+# PS= Province/State 
+# CU= Country/Region 
+# ZP= Zip/Postal Code 
+# FO= Funding Agency 
+# FG= Grant Number 
+# FT= Funding Text 
+# SU= Research Area 
+# WC= Web of Science Category 
+# IS= ISSN/ISBN 
+# UT= Accession Number 
+# PMID= PubMed ID 
 
 cran_cites_files <- 
-    paste0(here::here(), glue("/analysis/data/raw_data/cited_cran/savedrecs ({1:11}).txt"))
+    list.files(here::here("/analysis/data/raw_data/cited_cran/"),
+               full.names = TRUE)
+
 
 cran_cites_all_areas_all_years <- 
   map(cran_cites_files,
@@ -146,8 +155,28 @@ cran_cites_all_areas_top_journals_by_year <-
   mutate(prop = n / value ) %>% 
   filter(SO != 'JOURNAL OF STATISTICAL SOFTWARE') %>% 
   ungroup()
- 
 
+articles_shown_in_plot <- 
+  cran_cites_all_areas_top_journals_by_year %>% 
+  filter(!is.na(prop)) %>% 
+  summarise(sum_n = sum(n)) %>% 
+  pull(sum_n)
+
+# nice labels with n for plot
+cran_cites_all_areas_top_journals_by_year <- 
+cran_cites_all_areas_top_journals_by_year %>% 
+  group_by(SO) %>% 
+  summarise(total_n_articles = sum(n)) %>% 
+  mutate(SO_n = as.character(glue('{SO} (n = {total_n_articles})'))) %>% 
+  right_join(cran_cites_all_areas_top_journals_by_year,
+             by = "SO")
+```
+ 
+We used the 'Cited Reference Search' function provided by the Web of Science online scientific citation indexing service to identify journal articles that cite R. Although R has been available since the late 1990s [@Thieme_2018], a recommended format for citing the software did not appear until 2004, with the author given as "R Development Core Team". This recommended format for citing the software changed slightly in 2012 when the author was updated to "R Core Team". We searched the Web of Science using '"R DEV COR TEAM" OR "R CORE" OR "R CORE TEAM" OR "R DEVELOPMENT CORE TEAM"' in the CITED AUTHOR field. We sorted the results by frequency of citation, and selected the first 1000 items (the maximum allowed by the Web of Science service). These 1000 items represent variations on the recommended format for citing R, and found in the reference lists of `r prettyNum(how_many_articles_in_top_journals_for_cran_cites, ",")` English-languge articles indexed by the Web of Science in the research area of Environmental Sciences Ecology. We then downloaded the bibliographic data for all of these articles.
+
+Figure \@ref(fig:ecology-citing-r-plot) shows the percentage of articles citing R in each of several of the top ecology journals (as defined by how often their articles are cited). We restrict the start of the observation period to 2007 for convivnence. The plot shows that the percentage of articles citing R has increased from less than ten percent in all journals in the late 2000s, to more than 30% in _Ecosphere_, _Ecology and Evolution_, and _Molecular Ecology_ after 2012. We would not call this a Kuhnian paradigm shift, but it does show a substantial change in the tools of the discipline, supporting claims for a Galisonian tool-driven change in ecology similar to the changes described by @Touchon_McCoy_2016.   
+
+```{r ecology-articles-citing-r-plot, fig.cap=str_glue('Percentage of articles per year citing R in top Ecology journals ({prettyNum(articles_shown_in_plot,",")} articles out of {prettyNum(how_many_articles_in_top_journals_for_cran_cites,",")}). Data from Web of Science for 2007-2017')}
 min_y <- 2007
 max_y <- 2025
 all_sciences_citing_R_over_time <- 
@@ -159,7 +188,7 @@ ggplot(cran_cites_all_areas_top_journals_by_year,
   geom_text_repel(
     data = subset(cran_cites_all_areas_top_journals_by_year, 
                   PY == max(PY)),
-    aes(label = str_wrap(SO, 40)),
+    aes(label = str_wrap(SO_n, 40)),
     size = 4,
     nudge_x = 0,
     hjust = 0,
@@ -171,13 +200,10 @@ ggplot(cran_cites_all_areas_top_journals_by_year,
                      limits = c(min_y, max_y)) +
   scale_y_continuous(labels = scales::percent) +
   xlab("Publication year") +
-  ylab("Percentage of articles in that journal") +
+  ylab("Percentage of articles in that journal in that year") +
   theme_minimal() +
   theme(legend.position="none",
-        axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) +
-  ggtitle(str_glue('Percentage of articles per year citing R in top 10 WoS journals ({prettyNum(how_many_articles_in_top_journals_for_cran_cites,",")} articles)'),
-          subtitle = "Data from apps.webofknowledge.com,\nusing in SCI-EXPANDED & SSCI for 2007-2017")
-
+        axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) 
 
 ggsave(plot = all_sciences_citing_R_over_time, 
        filename = "all_sciences_citing_R_over_time.png",
@@ -188,104 +214,145 @@ ggsave(plot = all_sciences_citing_R_over_time,
 knitr::include_graphics(str_glue('{here::here()}/analysis/figures/all_sciences_citing_R_over_time.png'))
 ```
 
-This plot shows how data analysis is changing in the sciences more broadly towards the use of the R programming language. We searched the Web of Science, produced by Clarivate Analytics, for citations to the R program over the last ten years, and filtered the results to the top ten journals with the highest number of citations to this software. The purpose of this filtering step was to find areas of research were R is generally known, so we can see how its use is changing over time. Note that many articles that use R do not cite the R program, so these numbers underestimate the true use of R in science. 
-
-We can make two major observations: 
-
-**First**, the areas of science that have seen big growth in the use of R are ecology, evolution and related biological sciences. This is especially significant for us archaeologists, as ecology and biology are subjects from which we quite often adapt methods for analysis, as for example in point-pattern-analysis and statistical modelling. 
-We also see increases in multi-disciplinary journals such as PeerJ and PLOS One. 
-
-**Second**, the scale of the increases is quite impressive: Starting only 2012 some journals now have 20% of articles citing R. 
-
-So, we can see this is a substantial change in the way researchers are working in many fields. What about archaeology? Do we also see a change like this?
-
-## Slide: Archaeology articles citing R
+## Looking forward to a tool-driven change in Archaeology
 
 ```{r top-archaeology-journals-by-citations-of-r}
 
 # Data are from an 'advanced search' of apps.webofknowledge.com using WC=Archaeology on apps.webofknowledge.com.
 
-# get the top archaeology journals by numbers of articles.
-wc_archaeology_2017 <- 
-  readr::read_tsv(paste0(here::here(), "/analysis/data/raw_data/savedrecs.txt"), 
-            quote = "")
+# Results: 44,047
+# (from Web of Science Core Collection)
+# You searched for: (WC=Archaeology) AND LANGUAGE: (English) AND DOCUMENT TYPES: # (Article)
+# Timespan: 1900-2018. Indexes: SCI-EXPANDED, SSCI, A&HCI, ESCI
 
-# The 10 journals with the most articles are:
-top_journals_by_articles <- 
-wc_archaeology_2017 %>% 
+#- get journals with the most number of articles
+
+archy_files <- 
+    list.files(here::here("/analysis/data/raw_data/wos_archaeology/"),
+               full.names = TRUE)
+
+archy_all_years <- 
+  map(archy_files,
+      ~readr::read_tsv(.x, 
+                       quote = "",
+                       col_types = cols(.default = col_character()))) %>% 
+  bind_rows() %>% 
+  mutate(PY = as.numeric(PY)) %>% 
+  filter(PY <= 2017)
+
+# limit to top journals
+top_journals_for_archy<- 
+  archy_all_years %>% 
   group_by(SO) %>% 
-  tally(sort = TRUE) 
+  tally(sort = TRUE)
 
-# For 2007-2017:
-
-data_files_from_2007_to_2017 <- 
-  paste0(here::here(), glue("/analysis/data/raw_data/savedrecs ({1:2}).txt"))
-
-wc_archaeology_2007_to_2017 <- 
-  map(data_files_from_2007_to_2017,
-      ~readr::read_tsv(.x, quote = "")) %>% 
-  bind_rows()
-
-total_number_of_articles_in_sample <- 
-  nrow(wc_archaeology_2007_to_2017) 
-
-# most populararchaeology journals over time, that have some mention of R
-most_popular_journals_over_time <- 
-wc_archaeology_2007_to_2017 %>% 
+# n articles in top journals per year
+top_journals_for_archy_per_year <- 
+  archy_all_years %>% 
   group_by(SO, PY) %>% 
-  tally(sort = TRUE) %>% 
-  filter(!SO %in% c("JOURNAL OF CULTURAL HERITAGE",
-                    "STUDIES IN CONSERVATION",
-                    "INTERSECCIONES EN ANTROPOLOGIA",
-                    "ISRAEL EXPLORATION JOURNAL",
-                    "JOURNAL OF MATERIAL CULTURE",
-                    "TRABAJOS DE PREHISTORIA",
-                    "ARCHEOSCIENCES-REVUE D ARCHEOMETRIE")) %>% 
-  filter(n >= 2) %>% 
-  ungroup()
+  tally() %>% 
+  arrange(PY)
 
-most_popular_journals_over_time_names <- 
-  unique(most_popular_journals_over_time$SO)
+how_many_articles_in_top_archy_journals <- 
+  sum(top_journals_for_archy$n)
 
-archy_journals_total_number_of_articles <- 
-  read_csv(str_glue('{here::here()}/analysis/data/raw_data/top_archaeology_journals_articles_per_year.csv'))
+#-- get articles citing R that are archaeology
 
-top_archaeology_journals_articles_per_year <- 
-  archy_journals_total_number_of_articles %>% 
-  gather(variable, value, -journal_name) %>% 
-  mutate(year = as.numeric(variable)) %>% 
-  select(-variable)
-  
-cran_cites_in_archy_journals <- 
-  cran_cites_all_areas_all_years %>% 
-  filter(SO %in% most_popular_journals_over_time_names)
+# Results: 137
+# (from Web of Science Core Collection)
+# You searched for: CITED AUTHOR: ("R DEV COR TEAM" OR "R CORE" OR "R CORE TEAM" OR "R DEVELOPMENT CORE TEAM")
+# Refined by: WEB OF SCIENCE CATEGORIES: ( ANTHROPOLOGY ) AND WEB OF SCIENCE CATEGORIES: ( ARCHAEOLOGY )
+# Timespan: All years. Indexes: SCI-EXPANDED, SSCI, A&HCI, ESCI
 
-# what archaeology journals cite R?
-# unique(cran_cites_in_archy_journals$SO)
+archy_cran_files <- 
+      list.files(here::here("/analysis/data/raw_data/cited_cran_archaeology/"),
+               full.names = TRUE)
 
-archy_journals_total_number_of_citing_articles <- 
-  nrow(cran_cites_in_archy_journals)
+archy_cran_all_years <- 
+  map(archy_cran_files,
+      ~readr::read_tsv(.x, 
+                       quote = "",
+                       col_types = cols(.default = col_character()))) %>% 
+  bind_rows() %>% 
+  mutate(PY = as.numeric(PY)) %>% 
+  filter(PY <= 2017)
 
-cran_cites_in_archy_journals_per_year <- 
-  cran_cites_in_archy_journals %>% 
+# tally by year
+archy_cran_cites_all_areas_top_journals_by_year <- 
+  archy_cran_all_years %>% 
+  filter(SO %in% top_journals_for_archy$SO) %>% 
   group_by(SO, PY) %>% 
-  tally(sort = TRUE) %>% 
-  ungroup() %>% 
-  mutate(PY = as.numeric(PY))  %>% 
-  left_join(top_archaeology_journals_articles_per_year,
-            by = c("SO" = "journal_name",
-                   "PY" = "year")) %>% 
-  mutate(prop = n / value) %>% 
+  tally(sort = TRUE)  %>% 
+  left_join(top_journals_for_archy_per_year,
+            by = c('SO', 'PY')) %>% 
+   mutate(prop = n.x / n.y) %>% 
+  ungroup() 
+
+total_number_archaeology_articles_citing_r <- sum(archy_cran_cites_all_areas_top_journals_by_year$n.x)
+
+# check for slight differences in journal names
+# sort(unique(archy_cran_cites_all_areas_top_journals_by_year$SO))
+
+# nice labels with n for plot
+archy_cran_cites_all_areas_top_journals_by_year <- 
+archy_cran_cites_all_areas_top_journals_by_year %>% 
   group_by(SO) %>% 
-  mutate(jn = str_glue('{SO} (n = {sum(n)})')) %>% 
-  ungroup()
+  summarise(total_n_articles = sum(n.x)) %>% 
+  mutate(SO_n = as.character(glue('{SO} (n = {total_n_articles})'))) %>% 
+  right_join(archy_cran_cites_all_areas_top_journals_by_year,
+             by = "SO")
+
 
 min_y <- 2007
 max_y <- 2040
 
+all_archaeology_citing_R_over_time <- 
+ggplot(archy_cran_cites_all_areas_top_journals_by_year,
+       aes(PY,
+           prop,
+           colour = SO)) +
+  geom_line(size = 2) +
+  geom_point() +
+  geom_text_repel(
+    data = archy_cran_cites_all_areas_top_journals_by_year %>% 
+      group_by(SO) %>% 
+      slice(which.max(PY)) , 
+    aes(label = SO_n),
+    direction = "y",
+    size = 5,
+    nudge_x = 1,
+    hjust = 0) +
+  theme_minimal() +
+  theme(legend.position="none",
+        axis.text.x = element_text(angle = 90, 
+                                   hjust = 1, 
+                                   vjust = 0.5)) +
+  scale_x_continuous(breaks = min_y:max_y,
+                     labels = c(min_y:2017, 
+                                rep("",
+                                    length(2018:max_y))),
+                     limits = c(min_y, max_y)) +
+  scale_y_continuous(labels = scales::percent,
+                     limits = c(0, 0.2)) +
+  xlab("Publication year") +
+  ylab("Percentage of articles in that journal")
 
+ggsave(plot = all_archaeology_citing_R_over_time, 
+       filename = "all_archaeology_citing_R_over_time.png",
+       path = str_glue('{here::here()}/analysis/figures'),
+       height = 7,
+       width = 11)
+```
+
+```{r j-arch-sci-articles-citing-R}
+# look at the trend in JAS, where there are the most articles
+
+how_many_articles_in_jas <-  
+  archy_cran_cites_all_areas_top_journals_by_year$total_n_articles[1]
+
+  
 jas_cites_r <- 
-cran_cites_in_archy_journals_per_year %>% 
+archy_cran_cites_all_areas_top_journals_by_year %>% 
   filter(SO == "JOURNAL OF ARCHAEOLOGICAL SCIENCE") %>% 
   ggplot(aes(PY,
            prop)) +
@@ -304,65 +371,48 @@ cran_cites_in_archy_journals_per_year %>%
                   method = "lm", 
                   method.args = list(formula = y ~ x),
                   geom = "text",
-                  aes(label = paste("p-value: ",signif(..p.value.., digits = 4)))) +
+                  aes(label = paste("p-value: ",
+                                    signif(..p.value.., 
+                                           digits = 4)))) +
   xlab("year") +
   ylab("Proportion of articles citing R") +
-  ggtitle(expression(paste("Articles citing R in ", italic("Journal of Archaeological Science")))) +
+  ggtitle(expression(paste("Articles citing R in ", 
+                           italic("Journal of Archaeological Science")))) +
   theme_bw(base_size = 6)
-  
+```
+ 
+We conducted a similar bibliometric analysis for archaeology journals indexed by the Web of Science service. We used the 'Cited Reference Search' to find articles citing R in the same way as above, and then refined the results to keep only those articles published during 2007-2017 that are included in the Web of Science category 'Archaeology'. This resulted in `r how_many_articles_in_top_archy_journals` articles, of which `r total_number_archaeology_articles_citing_r` cite R.  Figure \@ref(fig:rchaeology-journals-with-subplot) shows the temporal trend of citations of R in archaeological articles. There are three interesting details revealed by this figure. 
+ 
+```{r archaeology-journals-with-subplot, fig.cap=str_glue('Percentage of Archaeology articles per year citing R ({total_number_archaeology_articles_citing_r} out of {prettyNum(how_many_articles_in_top_archy_journals, ",")} articles in sample. Data from Web of Science for 2007-2017')}
 
-all_archaeology_citing_R_over_time <- 
-ggplot(cran_cites_in_archy_journals_per_year,
-       aes(PY,
-           prop,
-           colour = SO)) +
-  geom_line(size = 2) +
-  geom_text_repel(
-    data = subset(cran_cites_in_archy_journals_per_year, 
-                  PY == max(PY)),
-    aes(label = jn),
-    direction = "y",
-    size = 5,
-    nudge_x = 1,
-    hjust = 0) +
-  theme_minimal() +
-  theme(legend.position="none",
-        axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) +
-  scale_x_continuous(breaks = min_y:max_y,
-                     labels = c(min_y:2017, rep("", length(2018:max_y))),
-                     limits = c(min_y, max_y)) +
-  scale_y_continuous(labels = scales::percent) +
-  xlab("Publication year") +
-  ylab("Percentage of articles in that journal") +
-  ggtitle(str_glue('Percentage of Archaeology articles per year citing R ({archy_journals_total_number_of_citing_articles} out of {prettyNum(total_number_of_articles_in_sample, ",")} articles in sample)'),
-          subtitle = "Data from apps.webofknowledge.com,\nusing in SCI-EXPANDED & SSCI for 2007-2017")  +
+
+# combine main plot and subplot
+all_archaeology_citing_R_over_time_and_subplot <- 
+all_archaeology_citing_R_over_time  +
   annotation_custom(grob = ggplotGrob(jas_cites_r), 
                           xmin = 2030, xmax = 2040, 
                           ymin = 0.10, ymax = 0.17)
 
-ggsave(plot = all_archaeology_citing_R_over_time, 
-       filename = "all_archaeology_citing_R_over_time.png",
+ggsave(plot = all_archaeology_citing_R_over_time_and_subplot, 
+       filename = "all_archaeology_citing_R_over_time_and_subplot.png",
        path = str_glue('{here::here()}/analysis/figures'),
-       height = 6,
-       width = 10)
+       height = 9,
+       width = 12)
 
-knitr::include_graphics(str_glue('{here::here()}/analysis/figures/all_archaeology_citing_R_over_time.png'))
+knitr::include_graphics(str_glue('{here::here()}/analysis/figures/all_archaeology_citing_R_over_time_and_subplot.png'))
 ```
 
-Here are the results for archaeological articles. We found `r archy_journals_total_number_of_citing_articles` articles that cite R over the last ten years. Note that this is certainly not complete, since these are just the journals tracked by the Web of Science database, and we know that archaeologists publish in a great variety of journals.
+The first detail we see here is that overall, the proportions and the absolute number of articles citing R in archaeology are much smaller than what we see in the ecology journals in Figure \@ref(fig:ecology-citing-r). Only the _Journal of Archaeological Science_ has more than 50 articles in our sample. We might conclude from this observation that archaeologists have yet to adopt programming for data analysis and visualisation in the same way that ecologists have.
 
-There are three important details in these plots:
+The second detail is that most archaeology journals do not show any increase in the percentage of article citing R over time . The ecology journals shown in Figure \@ref(fig:ecology-citing-r) show clear upward trends of increasing proportions of articles citing R over time, but we do not see any clear trends in the archaeology articles considered together. Indeed, in several of the archaeological journals in our sample, the first citations of R only occured in the last two years. The sample sizes for the archaeology journals are too small to confidently infer any trend of over time, with the exception of the _Journal of Archaeological Science_ with `r how_many_articles_in_jas` articles. The inset plot in Figure \@ref(fig:rchaeology-journals-with-subplot) shows a statistical test of change over time for articles in the _Journal of Archaeological Science_. With a moderate r-squared value and low p-value for the linear model, we can conclude that there is some evidence for an increase in citations of R over time in this journal. This may indicate an increasing use of R among archaeologists, especially those working at the intersection of the natural and physical sciences. This may hint at the start of a trend similar to what we see in the ecology journals of a widespread
 
-The **first** detail we see here is that overall, the proportions and the absolute number of articles citing R in archaeology are much smaller than what we see in the ecology journals on the previous slide. Only the _Journal of Archaeological Science_ has more than 10 articles in our sample. It's obvious, we have yet to adopt programming for data analysis in the same way that ecologists have. 
+Following on from this observation about the increasing popularity of R in then _Journal of Archaeological Science_, the third detail we see in these results is the distinctive types of journals that have articles citing R. There is a clear focus on journals that publich scientific archaeology, especially those that focus on specialised empirical analysis. In addition to the general archaeology journals, we also see _Lithic Technology_, _Anthropozoologica_, and _International Journal of Osteology_ in the journal names, indicating that we find R used by specialists in stone artefacts and faunal remains. To further investigate the topics that archaeologists are useing R to study, we conducted a statistical analysis of the words in the titles of all the articles in our sample.
 
-The **second** detail is that we do not see a significant increase over time. Both archaeology and the other sciences we saw on the previous slide show an increase in citing R at around 2013-2014, but we do not yet see much of an upward trend in the archaeology journals. Indeed, in several of our journals the first citations of R only occured in the last two years. The plot on the upper right of this slide shows a statistical test of change over time for articles in JAS. With a low r-squared value and high p-value for the linear model, we conclude that there is no evidence for an increase in citations over time in this journal.  
-
-The **third** detail we see is the distinctive types of journals that have articles citing R. There is a clear focus on scientific archaeology, with _Journal of Archaeological Science_ having the highest total number of articles. Archaeology as a subject has always been situated between a humanistic and a scientific tradition, but studies using statistical methods lean towards the sciences, which we mean with the term "scientific archaeology". We also see geoarchaeology, lithics, and environmental archaeology represented in the journal names. We can investigate this further with statistical analysis of the words in the titles of all the articles in our sample.
-
-## Slide: What are archaeologists doing with R?
-
+## What are R-using archaeologists writing about?
 
 ```{r text-mining-article-titles-archaeology}
+
+
 # https://www.tidytextmining.com/twitter.html
 
 # These are all archy articles
@@ -374,15 +424,15 @@ The **third** detail we see is the distinctive types of journals that have artic
 # subtract ones citing R from ones that do not
 
 wc_archaeology_2007_to_2017_no_R_cites <- 
-  wc_archaeology_2007_to_2017 %>% 
-  filter(TI %nin% cran_cites_in_archy_journals$TI)
+  archy_all_years %>% 
+  filter(TI %nin% archy_cran_all_years$TI)
 
 # combine
 archy_journal_articles <- 
   bind_rows(wc_archaeology_2007_to_2017_no_R_cites %>% 
             mutate(ID = "no_R_cites",
                    VL = as.character(VL)),
-           cran_cites_in_archy_journals %>% 
+           archy_cran_all_years %>% 
             mutate(ID = "has_R_cites"))
 
 
@@ -391,7 +441,7 @@ archy_journal_articles %>%
   unnest_tokens(word, TI) %>%
   filter(!word %in% c(stop_words$word, "archaeology", 
                       "archaeological",
-                      "analysis", "study", "site"),
+                      "analysis", "study", "site", "period", "past", "patterns", "investigation", "analyses", "late", "region", "based", "central", "north", "south", "east", "west", "western", "eastern", "ad", "pre", "sites", "evidence", "prehistoric", "remains", "change", "de", "identification", "northern", "southern", "valley", "implications", "valley", "history", "historical", "modern", "context", "stable", "middle", "approach", "san", "artifacts", "palaeolithic"),
          str_detect(word, "[a-z]"))
 
 frequency <- 
@@ -403,32 +453,39 @@ frequency <-
               summarise(total = n())) %>%
   mutate(freq = n/total)
 
-frequency <- frequency %>% 
+frequency <- 
+  frequency %>% 
   select(ID, word, freq) %>% 
   spread(ID, freq) %>%
-  arrange(no_R_cites, has_R_cites)
+  arrange(no_R_cites, has_R_cites) 
+
+```
+
+We computed a comparison of word frequences in journal article titles to get a better understanding of what topics archaeologists are writing about when they cite R. First we separated the archaeology articles into two groups, those that cite R, and those that do not. Second, we filter to keep only words that occur in titles in both groups, and remove stop words that are very common and uninformative (e.g. 'the', 'archaeological', 'study'). This resulted in `r prettyNum(nrow(frequency), ',')` words in `r prettyNum(nrow(archy_journal_articles))`. Third, for each word found in all the titles of the journal articles in each group, we computed its proportion of the total number of words in all the titles in each group. Figure \@ref(fig:text-mining-article-titles-archaeology) shows the results of this analysis. Words near the red line are used with about equal frequencies by papers that cite R and by papers that do not cite R. Words far away from the red line are used much more by one group of articles compared to the other.
+
+```{r text-mining-article-titles-archaeology-plot, fig.cap=str_glue("Comparing the frequency of words used in titles \nof archaeology articles ({prettyNum(nrow(frequency), ',')} words in {prettyNum(nrow(archy_journal_articles), ',')} articles)")}
 
 archaeology_articles_word_freqs <- 
 ggplot(frequency, 
        aes(no_R_cites, 
            has_R_cites)) +
     geom_abline(color = "red", 
-              size = 2) +
-  geom_jitter(alpha = 0.1, 
+              size = 1) +
+  geom_point(alpha = 0.1, 
               size = 2.5, 
               width = 0.25, 
               height = 0.25) +
   geom_text_repel(aes(label = word), 
-            size = 5,
-            segment.colour = NA) +
+            size = 3,
+            segment.colour = "grey80") +
   scale_x_log10(labels = percent_format(),
-                limits = c(0.001, 0.02)) +
-  scale_y_log10(labels = percent_format()) +
-
+                limits = c(0.00075, 0.015)) +
+  scale_y_log10(labels = percent_format(), 
+                limits = c(0.00075, 0.015)) +
   theme_minimal(base_size = 16) +
   xlab("Articles that do not cite R") +
   ylab("Articles that cite R") +
-  ggtitle(str_glue("Comparing the frequency of words used in titles \nof archaeology articles ({prettyNum(nrow(frequency), ',')} words in {prettyNum(nrow(archy_journal_articles), ',')} articles)"))
+  coord_equal()
 
 ggsave(plot = archaeology_articles_word_freqs, 
        filename = "archaeology_articles_word_freqs.png",
@@ -439,46 +496,29 @@ ggsave(plot = archaeology_articles_word_freqs,
 knitr::include_graphics(str_glue('{here::here()}/analysis/figures/archaeology_articles_word_freqs.png'))
 ```
 
-Here we see a comparison of word frequencies of the titles of archaeology journal articles. Words near the red line are used with about equal frequencies by papers that cite R and by papers that do not cite R. Words far away from the red line are used much more by one group of articles compared to the other. 
+Figure \@ref(fig:text-mining-article-titles-archaeology-plot) supports our initial observations that archaeologists using R tend to be doing archaeology that involves the natural and physical sciences. Articles that cite R more often have titles that include terms such as 'lithic', 'experimental', and 'isotope'. On the other hand, articles that do not cite R more often discuss the Roman and Bronze Age periods, and less often reflect a technical specialisation, if there is one, it seems to ceramics.  
 
-This plot supports our initial observations: archaeologists using R tend to be doing more scientific archaeology. We see that many words relating to stone artefacts, zooarchaeology, and geoarchaeology are more frequently used by R-using archaeologists. On the other hand, articles that do not cite R more often discuss the Neolithic and metal-age periods, and less often reflect a technical specialisation. 
+## From using code in research to sharing code with publications
 
-## Slide: The unrealised potential of R for reproducible research [signpost slide only]
-After this overview how R is being used at the moment, we want to focus on the possibilities of making research reproducible using R.
 
-## Slide 9: The unrealised potential of R for reproducible research 
+```{r archaeology-reproducible-articles}
 
-![](../figures/Marwick et al Fig 3 screenshot from the RStudio program.png)
-
-We would now like to focus on those archaeological papers using R, that are demonstrating the potential of R for open and reproducible research. These papers are using R Markdown for their research, which is shown in this figure.
-
-On the left we see a plain-text document written in R Markdown. This means that is has lines of code in amongst lines of normal text. We can format the text with simple additions, such as the underscore to indicate italics and the hash symbol to indicate a heading. These simple additions are Markdown, a very easy markup language with plain text formatting syntax. It is designed so that it can be converted to HTML and many other formats. **R** Markdown allows us to mix R code and text in the same document. Here we see a short snippet of R code right inside the text (nrow(cars)) as well as a longer block of code below.
-
-When this R Markdown document is rendered, or converted to another format such as PDF or Microsoft Word, we see that the code is replaced by the output it generates. On the right side of this figure we see that the inline code has been replaced by the number 50, and the code block below has been replaced by the plot. 
-
-We have found that some archaeologists are writing their entire journal articles useing R Markdown, and they share their plain-text R Markdown document along with their publication. This means that the reader can see all of the details of the data analysis, and all of the small decisions made along the way. This way the analysis is easily reproducible for others. 
-
-## Slide: Real-world example from Barton et al. 2018
-
-![](../figures/example-barton-et-al.png)
-
-Here is a real-world example R Markdown in use, from an archaeology article published in 2017. 
-
-## Slide: An increasing number of archaeologists are publishing reproducible research 
-
-```{r}
 archy_ctv_readme <- readLines(str_glue('{here::here()}/analysis/data/raw_data/ctv-archaeology-README.md'))
 
+journals <- c("Journal of Archaeological Method and Theory|J Archaeol Sci|Journal of Anthropological Archaeology|Journal of Archaeological Science|PLOS|Journal of Human Evolution|Asian Perspectives|Scientific Reports|PLoS ONE|The Holocene|Archaeology in Oceania|Quaternary International|Internet Archaeology|Quaternary Science Reviews|Quaternary International|Journal of Archaeological Science: Reports|Open Quaternary|Evolution and Human Behavior|PaleoAnthropology")
+
 top_archy_journals <-
- str_subset(archy_ctv_readme, "Journal of Archaeological Method and Theory|J Archaeol Sci|Journal of Anthropological Archaeology|Journal of Archaeological Science")
+ str_subset(archy_ctv_readme, journals)
 
 top_archy_journal_names <-
-  unlist(str_extract_all(archy_ctv_readme, "Journal of Archaeological Method and Theory|J Archaeol Sci|Journal of Anthropological Archaeology|Journal of Archaeological Science"))
+  unlist(str_extract_all(archy_ctv_readme, journals))
 
 
 top_archy_journal_names <- ifelse(top_archy_journal_names == "J Archaeol Sci",
                                   "Journal of Archaeological Science",
-                                  top_archy_journal_names)
+                                  ifelse(top_archy_journal_names == "PLOS",
+                                  "PLoS ONE",
+                                  top_archy_journal_names))
 
 archy_ctv_readme <- top_archy_journals
 archy_ctv_readme <- str_remove_all(archy_ctv_readme, "[[:punct:]]")
@@ -489,110 +529,90 @@ archy_ctv_readme_20XX <- archy_ctv_readme_20XX[archy_ctv_readme_20XX > 2010]
 
 number_of_reproducible_articles <- length(archy_ctv_readme_20XX)
 
+data_to_plot <- data_frame(year = archy_ctv_readme_20XX,
+                  journal_name = top_archy_journal_names) %>% 
+  filter(!is.na(year), 
+         year <= 2017) %>% 
+  mutate(year = factor(year))
+```
+
+
+One notable practice that we observed during our bibliometric analysis is that among authors of articles citing R, a subset of these authors make publicly available the code and data that they used to generate the results presented in their article. We identified `r number_of_reproducible_articles` articles that include R script and data files, either in the supplementary materials or in a trustworthy data repository. Figure \@ref(fig:archaeology-reproducible-articles) shows that although this number is small, it is increasing, hinting at the emergence of a new approach to how archaeologists share their research. 
+
+These archaeology articles that include publicly available R code and data are part of a new approach to scientific communication that has also been observed in other fields. Although we are not aware of attempts to quantify this change in the same way we have for archaeology, we have observed a number of recent publications that describe and recommend code sharing in statistics [@Baumer2014], genome biology [@markowetz2015five], computational biology [@Sandve2013], biostatistics [@Peng2009], computer science [@peng2011reproducible; @Mitchell2012], applied mathematics [@LeVeque2012], speech science [@Abari2012], political science [@king1995replication; Dafoe2014], and the social sciences generally [@Miguel2014]. As part of this growing interest in using code for research we also see manifestos aimed at researchers doing any kind of quantitative work [@nosek2015promoting; @Ince2012; @Barnes2010] and articles recommending using R in undergraduate education [@Bray2014; @Eglen2009]. Much of this literature is concerned with identifying and solving problems of irreproducibility in research. This comes from a renewed interest in basic principles of the science method: that once-off results should not be trusted, instead they should be reproducible by other members of the research community. Furthermore, an article should sufficiently describe the presented research results such that a colleague can fully understand the results and how they were obtained. Many of these authors trace problems of irreproducibility to the increased complextity of computer-based analyses (but only a limited space to describe them in a journal article), and the use of mouse-driven computer programs where the researcher's analytical decisions are not recorded during the research process, and thus cannot be shared with other researchers. In our view, using R (or similar open source programming language) to conduct research might not constitute a tool-driven revolution, but publicaly sharing the code used for research, as a solution to problems of irreproducibility could enable revolutionary change, since openly shared code could speed the adoption of code throughout a research community. 
+
+```{r archaeology-reproducible-articles-plot,  fig.cap=str_glue('Articles in archaeology journals\nusing R for reproducible research (n = {number_of_reproducible_articles})')}
+
 archaeology_articles_r_reproducible <- 
-ggplot(data_frame(archy_ctv_readme_20XX,
-                  top_archy_journal_names),
-       aes(archy_ctv_readme_20XX,
-           fill = str_wrap(top_archy_journal_names, 15))) +
-  geom_bar() +
-  theme_minimal(base_size = 16) +
-  scale_x_continuous(limits = c(min(archy_ctv_readme_20XX),
-                                max(archy_ctv_readme_20XX)+0.5),
-                     breaks = seq(min(archy_ctv_readme_20XX),
-                                  max(archy_ctv_readme_20XX)+0.5, 1)) +
-  ggtitle(str_glue('Articles in archaeology journals\nusing R for reproducible research (n = {length(archy_ctv_readme_20XX)})')) +
-  scale_fill_discrete(name = "Journal") +
-  theme(legend.text=element_text(size=10),
-        legend.key.size = unit(2, 'lines'),
-        legend.position = "bottom"
-        ) +
+ggplot(data_to_plot,
+       aes(year,
+           fill = journal_name)) +
+  geom_bar(position = "stack") +
+  scale_y_continuous(breaks = 1:10) +
+  scale_fill_discrete(name = "Journal")  +
   xlab("Year of publication") +
-  ylab("Number of articles")
+  ylab("Number of articles") +
+  theme_minimal(base_size = 18) +
+  theme(legend.text=element_text(size=16)) 
 
 ggsave(plot = archaeology_articles_r_reproducible, 
        filename = "archaeology_articles_r_reproducible.png",
        path = str_glue('{here::here()}/analysis/figures'),
        height = 9,
-       width = 9)
-
+       width = 16)
 knitr::include_graphics( str_glue('{here::here()}/analysis/figures/archaeology_articles_r_reproducible.png'))
 ```
 
-In our sample of R citing archaeology articles, we identified `r number_of_reproducible_articles` articles that include R script- and data files, either in the supplementary materials or in a trustworthy data repository. This plot shows that although this number is small, it is increasing, suggesting the beginning of a new approach to how archaeologists share their research.
+A pragamtic issue relating to wide-spread changes in scientific practice is what the incentives are for members of the research community that might not be motivated by abstract basic principles of the science method. If code sharing has some concrete career advantages then we might expect it to be more likely to be part of a tool-drive revolution.  @Vandewalle2012 analysed citation rates for 645 articles published in _IEEE Transactions on Image Processing_ during 2004–2006. He found statistically significant differences between the median number of cita�tions for papers that have code available and papers that do not have code available. In Figure \@ref(fig:citation-advantage) we conducted a similar anlysis for archaeology articles. We see that archaeological articles that cite R are consistently more highly cited themselves than articles that do not cite R. 
 
-The way in which these `r number_of_reproducible_articles` articles make their work reproducible is by:
+```{r citation-advantage, fig.cap=str_glue('Median citation rates per year for archaeology articles that cite R (n = {prettyNum(archy_journal_articles_tally[1], ",")}) and articles that do not cite R (n = {prettyNum(archy_journal_articles_tally[2], ",")})')}
+# archy papers that use code are more often cited?
+# is TC total citations? 
 
-- making the data files available with their publication
-- making the R script files available with the publication
-- using R Markdown to add narrative text with the R code to give explanation and make it easier for readers to understand the analysis
+archy_journal_articles_tally <- 
+archy_journal_articles %>% 
+  group_by(ID) %>% 
+  tally() %>% 
+  pull(n)
 
-Articles that have these three characteristics are part of a new paradigm in scientific communication, and with these `r number_of_reproducible_articles` articles, we believe we may have identified the beginning of this behaviour in archaeology. We think it will not be hard for archaeologists that already use R to make the transition to producing reproducible research by sharing their code and data. If this can be achieved, then we can realise some of the potential that R has for making archaeology more open and reproducible. 
+archy_journal_articles %>% 
+  mutate(TC = as.numeric(TC),
+         ID = ifelse(ID == "has_R_cites",
+                     "Cites R", "Doesn't cite R")) %>% 
+  group_by(ID, PY) %>% 
+  summarise(median = median(TC)) %>% 
+  filter(PY >= 2010) %>% 
+  ggplot(aes(ID,
+             median)) +
+  geom_col() +
+  facet_wrap( ~ PY) +
+  theme_minimal() +
+  ylab("Median number of citations") +
+  xlab("")
+```
 
-## Slide: Our new package, rrtools, and how it helps
+# Discussion
 
-As we studied the papers in our sample, we looked for common approaches to making and organising the code and data files. We found that there were few common standards used by archaeologists in making their work reproducible. There was a great variety of information presented in the code and data files. Some papers include code that will generate every figure and number in the text, while other papers only include code to produce one or two key figures in the paper. 
+The use of R is on the rise among archaeologists using natural and physical science methods, and has concrete advantages for authors that publish papers that cite R. To make it easier for archaeologists and researchers in other fields to use R for research and publication, we describe the R package rrtools ('reproducible research tools'). This package aims to simplify many of the steps needed to write reproducible research, and to guide users to best practices with minimal effort. The rrtools package contains functions that create a file structure according to fundamental principles of organising files for research. First, we keep the data separate from the methods. This means keep the code in a separate directory to the data. Second, we, keep the raw data seprate from data that is created or derived during the analysis.These two basic principles make it easy to stay organised during a complicated project, and make it easier for a reader to navigate their way through the compendium of files that are shared with the publication. 
 
-Looking further afield, we also reviewed current efforts towards improving the reproducibility of research in other disciplines. In reviewing the literature we found several useful guides in diverse fields such as ecology and fluid dynamics. These guides described several best practices that are not yet common in archaeology. 
+The rrtools package contains several functions to enable a researcher to quickly set up a compendium suitable for writing reproducible research in R. Each of these steps reflects a best practice that has been previously articulated in other feilds. We will focus here on the first five, as these are most relevant to most researchers:
 
-So, after looking at the reproducible articles in archaeology, and the best practices in other disciplines, we wanted to make a simple toolkit that will help archaeologists to write reproducible research as easily as possible. This toolkit is an R package called rrtools. This package contains a small number of functions that automate many common analysis setup tasks. 
-
-![](../figures/rrtools-steps-carbon.png)
-
-On this slide we show the typical use of the key functions in rrtools that a researcher would use to quickly set up a compendium suitable for writing reproducible research in R. Each of these steps reflects a best practice that we've noted in our review of the literature. We will focus now on the first five:
-
-- **use_compendium:**  This function creates a new directory for the research project, and creates an R package within this directory. We use the R package structure as the standard for our directory because it is widely recognised by R users. This means that people know where to look for code, where to look for data, and where to look for dependancies and other information.     
+- **rrtools::use_compendium:**  This function creates a new directory for the research project, and creates an R package within this directory. We use the R package structure as the standard for our directory because it is widely recognised by R users. This means that people know where to look for code, where to look for data, and where to look for dependancies and other information.     
 - **usethis::use_mit_license:** This function creates a copy of the MIT software lisence to the compendium. This is important for two reasons. First, because it tells the reader that the author is happy for their code to be reused by other people. And second, it tells the reader that the author does not take responsibility for any problems that the reader might have when they use the code. This is important for setting the expectations about the relationship between the author and the reader, regarding the use of code.    
-- **devtools::use_github:**  This will initiate the use of the Git version control system. This is the current state-of-the-art for version control of any kind of plain text file, including text, code, data, and images. This will also create a repository on the GitHub website. Using version control is important because it allows the author to time-travel back to earlier states of their analysis, if they take a dead-end path. It is also important for making collaboration smooth because many people can work on one set of files without losing track of what the most recent version is. Plus it is nice to have a remote back-up of our work in case of an emergency. The GitHub repository can be kept private if desired, until the work is published.     
-- **use_readme_rmd:**  This will create a simple document that is usually the first thing a reader sees when they browse the code files. This document is important because it helps to describe to the reader what to expect in the compendium, and it gives details of how to cite the compendium.     
-- **use_analysis:**  This function creates a set of folders according to the best practices for organising a typical reasearch project. We recognise that this file structure wont be perfect for every project. But we know that it will suit many projects quite well, and it will at least make the user think about how to organise their files logically, and according to best practises. 
+- **usethis::use_github:**  This will initiate the use of the Git version control system. This is the current state-of-the-art for version control of any kind of plain text file, including text, code, data, and images. This will also create a repository on the GitHub website. Using version control is important because it allows the author to time-travel back to earlier states of their analysis, if they take a dead-end path. It is also important for making collaboration smooth because many people can work on one set of files without losing track of what the most recent version is. Plus it is nice to have a remote back-up of our work in case of an emergency. The GitHub repository can be kept private if desired, until the work is published.     
+- **rrtools::use_readme_rmd:**  This will create a simple document that is usually the first thing a reader sees when they browse the code files. This document is important because it helps to describe to the reader what to expect in the compendium, and it gives details of how to cite the compendium.     
+- **rrtools::use_analysis:**  This function creates a set of folders according to the best practices for organising a typical reasearch project. We recognise that this file structure wont be perfect for every project. But we know that it will suit many projects quite well, and it will at least make the user think about how to organise their files logically, and according to best practises. 
 
-## Slide: The best-practice directory structure from rrtools
+# Conclusion
 
-![](../figures/rrtools-analysis-dir.png)
+We have shown a bibliometric analysis that reveals substantial change in the use of the R programming languages in ecology  We saw that ecological and evolutionary sciences have strongly embraced R in their publications. We have also shown that archaeologists have more recently taken up R, but to a much lesser degree, so far, than what we see in the other fields. We've seen that the use of R is most common in more scientific aspects of archaeology. We also identified a small sub-set of archaeology papers that use R to make their work fully reproducible. There is a lot of potential for other archaeologists to make their work reproducible, and we think this would be a good thing for archaeology generally. We have presented our freely available R package, rrtools, which is designed to make it easy for researchers in archaeology and other fields to make their research reproducible. We hope this will help to realise some of the potential to make archaeological research more open and reproducible.       
 
-Here is the file structure the rrtools gives us. For now, we want to point out two important principles that it enforces:
+## Acknowledgements
 
-- Keep the data separate from the methods. This means keep the code in a separate directory to the data    
-- Keep the raw data seprate from data that is created or derived during the analysis. 
-
-These two fundamental principles make it easy to stay organised during a complicated project, and make it easier for a reader to navigate their way through the compendium. 
-
-
-## Slide: Summary
-
-To summarise:    
-
-- We have shown a bibliometric analysis that reveals substantial change in the use of the R programming languages in the sciences generally. We saw that ecological and evolutionary sciences have really embraced R in their publications.      
-
-- We have also shown that archaeologists have more recently taken up R, but to a much lesser degree, so far, than what we see in the other fields. We've seen that the use of R is most common in more scientific aspects of archaeology.     
-
-- We also identified a small sub-set of archaeology papers that use R to make their work fully reproducible. There is a lot of potential for other archaeologists to make their work reproducible, and we think this would be a good thing for archaeology generally.   
-
-- We have presented our freely available R package, rrtools, which is designed to make it easy for researchers in archaeology and other fields to make their research reproducible. We hope this will help to realise some of the potential to make archaeological research more open and reproducible.       
-
-Thank you. 
+Our project comes from the group who took part in the 2017 Summer School on Reproducible Research in Landscape Archaeology at the Freie Universität Berlin (17-21 July), funded and jointly organized by Excellence Cluster 264 Topoi, the Collaborative Research Center 1266, and ISAAKiel. 
 
 
 
----
-
-<!--
-
-These are spare slides that might help with Q&A, but not for the main talk
-
-## Slide: Advanced reproducibility with rrtools
-
-![](../figures/rrtools-steps-carbon.png)
-
-The last three functions that rrtools gives us are advanced topics that we summarise only very briefly here.  
-
-- **use_dockerfile:** This function generates a configuration file that allows another user to recreate the computational environment of the original author. This is important for complex projects that have many pieces of software that might be difficult to install correctly. Sometimes when a piece of software is updates, its behaviour can change, which can alter the results of an analysis. This function helps to protect again this problem.    
-- **use_travis:** This function will create a configuration file so that our compendium can be automatically checked each time we update it. This is especially useful when working with collaborators because it helps to identify problems in the analysis before they become too big.    
-- **use_testthat:** This creates a template for adding tests for any custom functions used in the analysis. This is important so we can ensure that the functions perform as expected while we work on the anlysis.    
-
-These three functions are very widely used in software engineering to give quality control to a package. With our rrtools package we have brought these tools into a research context where they can help researchers to make their analyses easy to work on and easy for others reproduce. 
-
--->
 
 <!-- The following line inserts a page break when the output is MS Word. For page breaks in PDF, use \newpage on its own line.  -->
 ##### pagebreak
