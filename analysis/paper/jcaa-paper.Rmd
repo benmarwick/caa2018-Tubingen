@@ -594,7 +594,7 @@ archy_journal_articles %>%
 
 # Discussion
 
-The use of R is on the rise among archaeologists using natural and physical science methods, and has concrete advantages for authors that publish papers that cite R as they tend to be cited more often. This also is an indicator for the increase in popularity of R. 
+The use of R is on the rise among archaeologists using natural and physical science methods, and has concrete advantages for authors that publish papers that cite R as they tend to be referenced more often. This also is an indicator for the increase in popularity of R. 
 
 The use of R or any other scripting languages enables a paradigm-shift, as it offers the possibility to share one's code. The sharing of code has been identified in other disciplines as an amplifier of methodological change [@touchon_and_mccoy_2016]. It also enables researchers to not just reproduce the work of others, but to also evaluate them according to the scientific method. Thus, the sharing of code may be at the root of a tool-driven paradigm-change as desribed in the work of @Galison_1997. 
 
@@ -612,9 +612,15 @@ The rrtools package contains several functions to enable a researcher to quickly
 - **rrtools::use_readme_rmd:**  This will create a simple document that is usually the first thing a reader sees when they browse the code files. This document is important because it helps to describe to the reader what to expect in the compendium, and it gives details of how to cite the compendium.     
 - **rrtools::use_analysis:**  This function creates a set of folders according to the best practices for organising a typical reasearch project. We recognise that this file structure wont be perfect for every project. But we know that it will suit many projects quite well, and it will at least make the user think about how to organise their files logically, and according to best practises. 
 
+Using rrtools or its addin for Rstudio [cite Clemens here] enables the researcher to easily set up a digital work place that enables reproducible research. [do we name people here, who've already used it?]
+
 # Conclusion
 
-We have shown a bibliometric analysis that reveals substantial change in the use of the R programming languages in ecology  We saw that ecological and evolutionary sciences have strongly embraced R in their publications. We have also shown that archaeologists have more recently taken up R, but to a much lesser degree, so far, than what we see in the other fields. We've seen that the use of R is most common in more scientific aspects of archaeology. We also identified a small sub-set of archaeology papers that use R to make their work fully reproducible. There is a lot of potential for other archaeologists to make their work reproducible, and we think this would be a good thing for archaeology generally. We have presented our freely available R package, rrtools, which is designed to make it easy for researchers in archaeology and other fields to make their research reproducible. We hope this will help to realise some of the potential to make archaeological research more open and reproducible.       
+Starting with the discussion of Kuhn's influential work on paradigm-shifts in science [citation needed], we offer a second explanation on how pardigm-shifts develop in science with the help of Galison [-@galison_1997], who focusees on the material culture of a science and its tools. A change in the paradigms of a discipline may also only occur, if tools to implement this change are available. The change we are aiming for is the move to a reproducible computational archaeology, that adheres to the scientific method. The tool which we have been discussing here is R, as an example for scientific scripting languages. 
+
+We have shown a bibliometric analysis that reveals substantial change in the use of the R programming languages in ecology  We saw that ecological and evolutionary sciences have strongly embraced R in their publications. Archaeologists have more recently taken up R, but to a much lesser degree, so far, than what we see in the other fields, most commonly in more scientific aspects of archaeology. We also identified a small sub-set of archaeology papers that use R to make their work fully reproducible and could identify an advantage of citing R for researchers as it leads to being referenced more often. 
+
+There is a lot of potential for other archaeologists to make their work reproducible, and we think this is a much needed paradigm-shift in computational archaeology. We therefore presented our freely available R package, rrtools, which is designed to make it easy for researchers in archaeology and other fields to make their research reproducible. We hope this will help to realise some of the potential to make archaeological research more open and reproducible and in this way encourage researchers to adhere to the scientific method.       
 
 ## Acknowledgements
 
