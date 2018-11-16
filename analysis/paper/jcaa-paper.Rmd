@@ -59,7 +59,7 @@ Galison's emphasis on tool-driven change, as a complement to Kuhnian concept-dri
 
 # Bibliometric analysis of tool-driven change
 
-The question of predicting or generating change in scientific practice via adoption of new tools is especially intruiging, and in this section we explore how a change that has been observed in ecology might be relevant for understanding or even directing the future of archaeology. 
+The question of predicting or generating change in scientific practice via adoption of new tools is especially intruiging, and in this section we explore how a change that has been observed in ecology might be relevant for understanding or even directing the future of archaeology. Biological disciplines have a long tradition of influencing archaeological thought, starting with Oscar Montelius, whose typological method was inspired by Darwin's theory of evolution [@Montelius_1899, 237]. Also nowadays quite a number of spatial statistical algorithms used in archaeology are derived from Ecology [@keron_use_2015, 7].
 
 ## Looking back on a tool-driven change in Ecology
 
