@@ -180,13 +180,14 @@ Figure \@ref(fig:ecology-articles-citing-r-plot) shows the percentage of article
 
 ```{r ecology-articles-citing-r-plot, fig.cap=str_glue('Articles per year citing R in top Ecology journals ({prettyNum(articles_shown_in_plot,",")} articles out of {prettyNum(how_many_articles_in_top_journals_for_cran_cites,",")}). Data from Web of Science for 2007-2017')}
 min_y <- 2007
-max_y <- 2050
+max_y <- 2040
 all_sciences_citing_R_over_time <- 
 ggplot(cran_cites_all_areas_top_journals_by_year,
        aes(PY,
            prop,
            colour = SO)) +
   geom_line(size = 2) +
+  scale_colour_brewer(palette = "Paired") + 
   geom_text_repel(
     data = subset(cran_cites_all_areas_top_journals_by_year, 
                   PY == max(PY)),
@@ -198,7 +199,7 @@ ggplot(cran_cites_all_areas_top_journals_by_year,
     direction = "y"
   ) +
    scale_x_continuous(breaks = min_y:max_y,
-                     labels = c(min_y:2017rep, rep("", length(2018:max_y))),
+                     labels = c(min_y:2017, rep("", length(2018:max_y))),
                      limits = c(min_y, max_y)) +
 #  scale_y_continuous(labels = scales::percent) +
   xlab("Publication year") +
@@ -312,7 +313,9 @@ archy_cran_cites_all_areas_top_journals_by_year %>%
 
 
 min_y <- 2007
-max_y <- 2050
+max_y <- 2035
+
+library(RColorBrewer)
 
 all_archaeology_citing_R_over_time <- 
 ggplot(archy_cran_cites_all_areas_top_journals_by_year,
@@ -320,6 +323,7 @@ ggplot(archy_cran_cites_all_areas_top_journals_by_year,
            prop,
            colour = SO)) +
   geom_line(size = 2) +
+  scale_colour_brewer(palette = "Paired") + 
   geom_point() +
   geom_text_repel(
     data = archy_cran_cites_all_areas_top_journals_by_year %>% 
@@ -399,8 +403,8 @@ To compare with ecology we conducted a similar bibliometric analysis for archaeo
 all_archaeology_citing_R_over_time_and_subplot <- 
 all_archaeology_citing_R_over_time  +
   annotation_custom(grob = ggplotGrob(jas_cites_r), 
-                          xmin = 2030, xmax = 2050, 
-                          ymin = 1.2, ymax = 2.6) # changed position because of numbers now instead of percentage + logarithmic scale in bigger plot
+                          xmin = 2025, xmax = 2035, 
+                          ymin = 2.9, ymax = 4) # changed position because of numbers now instead of percentage + logarithmic scale in bigger plot
 
 ggsave(plot = all_archaeology_citing_R_over_time_and_subplot, 
        filename = "all_archaeology_citing_R_over_time_and_subplot.png",
