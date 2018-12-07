@@ -57,7 +57,7 @@ We can see a compelling exploration of the concrete sense of a paradigm in the w
 
 Galison's emphasis on tool-driven change, as a complement to Kuhnian concept-driven change, has much potential for archaeology. The centrality of material culture in Galison's view raises the question about whether there is scope for archaeologists to make productive contributions to understanding change in the history science through an archaeological analysis of scientific instrumentation [cf. @Schiffer_2013]. Furthermore, Galison's analysis of the image/logic contrast in the history of physics invites a similar analysis of the history of archaeology. Can we identify archaeological traditions focused on data collection and analysis using images and image-making devices [cf. @molyneaux2013cultural], in contrast to digital devices? One candidate for this might be the shift from building relative chronologies based on seriation of visually distinctive artefacts to absolute chronologies based on radiometric dating using computer-controlled instruments. A third issue is how we can use a tool-driven approach not just as a framework for understanding change in science, but as a method to predict or generate change in archaeology?
 
-# Bibliometric analysis of tool-driven change
+# Bibliometric analysis of a tool-driven change
 
 The question of predicting or generating change in scientific practice via adoption of new tools is especially intruiging, and in this section we explore how a change that has been observed in ecology might be relevant for understanding or even directing the future of archaeology. Biological disciplines have a long tradition of influencing archaeological thought, starting with Oscar Montelius, whose typological method was inspired by Darwin's theory of evolution [@Montelius_1899, 237]. Also nowadays quite a number of spatial statistical algorithms used in archaeology are derived from Ecology [@keron_use_2015, 7].
 
@@ -154,7 +154,7 @@ cran_cites_all_areas_top_journals_by_year <-
   left_join(top_journals_for_cran_cites_articles_per_year,
             by = c('journalname' = 'X4', 
                    'PY' = "year")) %>% 
-  mutate(prop = n / value ) %>% 
+  mutate(prop = n ) %>% # dropped / value to not have percentages
   filter(SO != 'JOURNAL OF STATISTICAL SOFTWARE') %>% 
   ungroup()
 
@@ -178,19 +178,20 @@ We used the 'Cited Reference Search' function provided by the Web of Science onl
 
 Figure \@ref(fig:ecology-articles-citing-r-plot) shows the percentage of articles citing R in each of several of the top ecology journals (as defined by how often their articles are cited). We restrict the start of the observation period to 2007 for convenience. The plot shows that the percentage of articles citing R has increased from less than ten percent in all journals in the late 2000s, to more than 30% in _Ecosphere_, _Ecology and Evolution_, and _Molecular Ecology_ after 2012. We would not call this a Kuhnian paradigm shift, but it does show a substantial change in the tools of the discipline, supporting claims for a Galisonian tool-driven change in ecology similar to the changes described by @Touchon_McCoy_2016.   
 
-```{r ecology-articles-citing-r-plot, fig.cap=str_glue('Percentage of articles per year citing R in top Ecology journals ({prettyNum(articles_shown_in_plot,",")} articles out of {prettyNum(how_many_articles_in_top_journals_for_cran_cites,",")}). Data from Web of Science for 2007-2017')}
+```{r ecology-articles-citing-r-plot, fig.cap=str_glue('Articles per year citing R in top Ecology journals ({prettyNum(articles_shown_in_plot,",")} articles out of {prettyNum(how_many_articles_in_top_journals_for_cran_cites,",")}). Data from Web of Science for 2007-2017')}
 min_y <- 2007
-max_y <- 2025
+max_y <- 2040
 all_sciences_citing_R_over_time <- 
 ggplot(cran_cites_all_areas_top_journals_by_year,
        aes(PY,
            prop,
            colour = SO)) +
   geom_line(size = 2) +
+  scale_colour_brewer(palette = "Paired") + 
   geom_text_repel(
     data = subset(cran_cites_all_areas_top_journals_by_year, 
                   PY == max(PY)),
-    aes(label = str_wrap(SO_n, 40)),
+    aes(label = str_wrap(SO_n, 80)), # is this the line break problem solved?
     size = 4,
     nudge_x = 0,
     hjust = 0,
@@ -200,9 +201,9 @@ ggplot(cran_cites_all_areas_top_journals_by_year,
    scale_x_continuous(breaks = min_y:max_y,
                      labels = c(min_y:2017, rep("", length(2018:max_y))),
                      limits = c(min_y, max_y)) +
-  scale_y_continuous(labels = scales::percent) +
+#  scale_y_continuous(labels = scales::percent) +
   xlab("Publication year") +
-  ylab("Percentage of articles in that journal in that year") +
+  ylab("Number of Articles in journal per year") +
   theme_minimal() +
   theme(legend.position="none",
         axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) 
@@ -287,7 +288,7 @@ archy_cran_cites_all_areas_top_journals_by_year <-
   tally(sort = TRUE)  %>% 
   left_join(top_journals_for_archy_per_year,
             by = c('SO', 'PY')) %>% 
-   mutate(prop = n.x / n.y) %>% 
+   mutate(prop = n.x) %>% # dropped /n.y to not have percentage
   ungroup() 
 
 total_number_archaeology_articles_citing_r <- sum(archy_cran_cites_all_areas_top_journals_by_year$n.x)
@@ -302,11 +303,19 @@ archy_cran_cites_all_areas_top_journals_by_year %>%
   summarise(total_n_articles = sum(n.x)) %>% 
   mutate(SO_n = as.character(glue('{SO} (n = {total_n_articles})'))) %>% 
   right_join(archy_cran_cites_all_areas_top_journals_by_year,
-             by = "SO")
+             by = "SO") 
+
+# filter so not to have the "just one article in R"-journals clutter up the graph
+
+archy_cran_cites_all_areas_top_journals_by_year <- 
+archy_cran_cites_all_areas_top_journals_by_year %>%
+    filter(total_n_articles > 1)
 
 
 min_y <- 2007
-max_y <- 2040
+max_y <- 2035
+
+library(RColorBrewer)
 
 all_archaeology_citing_R_over_time <- 
 ggplot(archy_cran_cites_all_areas_top_journals_by_year,
@@ -314,11 +323,12 @@ ggplot(archy_cran_cites_all_areas_top_journals_by_year,
            prop,
            colour = SO)) +
   geom_line(size = 2) +
+  scale_colour_brewer(palette = "Paired") + 
   geom_point() +
   geom_text_repel(
     data = archy_cran_cites_all_areas_top_journals_by_year %>% 
       group_by(SO) %>% 
-      slice(which.max(PY)) , 
+      slice(which.max(PY)), 
     aes(label = SO_n),
     direction = "y",
     size = 5,
@@ -334,10 +344,11 @@ ggplot(archy_cran_cites_all_areas_top_journals_by_year,
                                 rep("",
                                     length(2018:max_y))),
                      limits = c(min_y, max_y)) +
-  scale_y_continuous(labels = scales::percent,
-                     limits = c(0, 0.2)) +
+  scale_y_continuous(trans = "log2") + # to be able to see smaller numbers better
+    #scale_y_continuous(labels = scales::percent,
+   #                  limits = c(0, 0.2)) +
   xlab("Publication year") +
-  ylab("Percentage of articles in that journal")
+  ylab("Number of Articles in journal per year")
 
 ggsave(plot = all_archaeology_citing_R_over_time, 
        filename = "all_archaeology_citing_R_over_time.png",
@@ -377,7 +388,7 @@ archy_cran_cites_all_areas_top_journals_by_year %>%
                                     signif(..p.value.., 
                                            digits = 4)))) +
   xlab("year") +
-  ylab("Proportion of articles citing R") +
+  ylab("Number of articles citing R") +
   ggtitle(expression(paste("Articles citing R in ", 
                            italic("Journal of Archaeological Science")))) +
   theme_bw(base_size = 6)
@@ -392,8 +403,8 @@ To compare with ecology we conducted a similar bibliometric analysis for archaeo
 all_archaeology_citing_R_over_time_and_subplot <- 
 all_archaeology_citing_R_over_time  +
   annotation_custom(grob = ggplotGrob(jas_cites_r), 
-                          xmin = 2030, xmax = 2040, 
-                          ymin = 0.10, ymax = 0.17)
+                          xmin = 2025, xmax = 2035, 
+                          ymin = 2.9, ymax = 4) # changed position because of numbers now instead of percentage + logarithmic scale in bigger plot
 
 ggsave(plot = all_archaeology_citing_R_over_time_and_subplot, 
        filename = "all_archaeology_citing_R_over_time_and_subplot.png",
@@ -541,7 +552,7 @@ data_to_plot <- data_frame(year = archy_ctv_readme_20XX,
 
 These archaeology articles that include publicly available R code and data are part of a new approach to scientific communication that has also been observed in other fields. Although we are not aware of attempts to quantify this change in the same way we have for archaeology, we have observed a number of recent publications that describe and recommend code sharing in statistics [@Baumer2014], genome biology [@markowetz2015five], computational biology [@Sandve2013], biostatistics [@Peng2009], computer science [@peng2011reproducible; @Mitchell2012], applied mathematics [@LeVeque2012], speech science [@Abari2012], political science [@king1995replication; @Dafoe2014], and the social sciences generally [@Miguel2014]. As part of this growing interest in using code for research we also see manifestos aimed at researchers doing any kind of quantitative work [@nosek2015promoting; @Ince2012; @Barnes2010] and articles recommending using R in undergraduate education [@Bray2014; @Eglen2009]. Much of this literature is concerned with identifying and solving problems of irreproducibility in research. This comes from a renewed interest in basic principles of the scientific method: that once-off results should not be trusted, instead they should be reproducible by other members of the research community. Furthermore, an article should sufficiently describe the presented research results such that a colleague can fully understand the results and how they were obtained. Many of these authors trace problems of irreproducibility to the increased complextity of computer-based analyses (but only a limited space to describe them in a journal article), and the use of mouse-driven computer programs where the researcher's analytical decisions are not recorded during the research process, and thus cannot be shared with other researchers. 
 
-In our view, merely using R (or similar open source programming languages) to conduct research might not constitute a tool-driven revolutionb by itself, but publicaly sharing the code used for research, as a solution to problems of irreproducibility, could enable revolutionary change. Openly shared code could speed the widespread adoption of the reproducibility are a core tenet of the scientific process, since it frees researchers from the black box that most mouse-driven computers are, and enables researchers to not only rerun the shared analysis, but to gain access to all parameter settings, empowering them to change these and therefore properly evaluate, extend and reuse the published results. As open source languages such as R (and Python) are free to use, and most trustworthy repositories are also free (such as zenodo, osf, figshare, etc.), then even researchers with limited resources anywhere in the world can to contribute equally to the research community by using and sharing code. 
+In our view, merely using R (or similar open source programming languages) to conduct research might not constitute a tool-driven revolution by itself, but publically sharing the code used for research, as a solution to problems of irreproducibility, could enable revolutionary change. Openly shared code could speed the widespread adoption of reproducibility as a core tenet of the scientific process, since it frees researchers from the black box that most mouse-driven computers are, and enables researchers to not only rerun the shared analysis, but to gain access to all parameter settings, empowering them to change these and therefore properly evaluate, extend and reuse the published results. As open source languages such as R (and Python) are free to use, and most trustworthy repositories are also free (such as zenodo, osf, figshare, etc.), then even researchers with limited resources anywhere in the world can to contribute equally to the research community by using and sharing code. 
 
 ```{r archaeology-reproducible-articles-plot, fig.cap=paste0('Articles in archaeology journals\nusing R for reproducible research (n = ', number_of_reproducible_articles,')')}
 
@@ -607,7 +618,7 @@ As @Galison_1997 describes a shift in the practices of physicists, so does archa
 
 These concerns about how digital tools affect what we consider is and isn't archaeology intersect with the work of @gieryn1999cultural on boundary construction. In his cultural cartography of science, Gieryn examines boundaries between science generally and varieties of less authoritative non-science. He argues that the boundaries are drawn and redrawn contiuously in flexible, historically changing and sometimes ambiguous ways. Gieryn claims that the cultural authority of science flows from boundary work in professional and political settings where scientists construct a public image for science as a source of credible knowledge, validate their work, and marginalize claims by competitors. Boundary work involves attributions of selected characteristics to science in order to distinguish it from non-scientific competitors. The increasing voluntary use and sharing of code by researchers, and demands for it by readers and peer reviewers is a form of active boundary work that is shifting the boundary between scientific and non- or less-scientific archaeology. The authors, as members of this group, argue that the use of code as a research tool, and the sharing of code as a public research product, are increasingly attributes that are being used to distinguish science from less scientific work. The reason for this is that using code, and making it available for others to inspect, enhances the credibility of knowledge claims. 
 
-On another level, we'd like to point to the _technicity_ of tools, in our case coding. Aud Sissel Hoel and Iris van der Tuin are drawing on Ernst Cassirer's „Form und Technik“ [-@cassirer_form_1930] and Gilbert Simondon's „Du monde d'existence des objets techniques" [-@simondon_mode_1958] to define technicity as a term to describe that technology, i. e. tools and machines respectively, interact with the human and with nature [@hoel_ontological_2013, 188]. Technology is said to own an instrumental kind of logos (Cassierer, see @hoel_ontological_2013, 194) and in analogy to language it exercises a certain measure of agency in mediating between human, nature and technology. The use of a scripting language might exemplify this quite nicely, as it is not just a technological tool, but quite rightly named "language" as well. 
+On another level, we'd like to point to the _technicity_ of tools, in our case coding. Aud Sissel Hoel and Iris van der Tuin are drawing on Ernst Cassirer's „Form und Technik“ [@cassirer_form_1930] and Gilbert Simondon's "Du monde d'existence des objets techniques" [@simondon_mode_1958] to define technicity as a term to describe that technology, i. e. tools and machines respectively, interact with the human and with nature [@hoel_ontological_2013, 188]. Technology is said to own an instrumental kind of logos (Cassierer, see @hoel_ontological_2013, 194) and in analogy to language it exercises a certain measure of agency in mediating between human, nature and technology. The use of a scripting language might exemplify this quite nicely, as it is not just a technological tool, but quite rightly named "language" as well. 
 
 For our paper the concept of technicity is interesting because in contrast to the concept of technological determinism, which puts technology as a force against the human, van der Tuin and Hoel (as well as Cassirer and Simondon) enfold technology into „the human“ without letting it lose its "foreignness" and further develop the notions of „human“ and „nature“ [@hoel_ontological_2013, 190]. Any change in tools therefore will influence how human researchers interact with their objects of interest. Interestingly it is exactly at the point inbetween continously evolving subjects and objects, where van der Tuin and Hoel place technology and the creation of knowledge [@hoel_ontological_2013, 199]. The "productive back-and-forth" between all parties may challenge established notions of culture, but also offers a concept of formation through differing, called "performative correspondence" [@hoel_ontological_2013, 201]. 
 
