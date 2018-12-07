@@ -190,7 +190,7 @@ ggplot(cran_cites_all_areas_top_journals_by_year,
   geom_text_repel(
     data = subset(cran_cites_all_areas_top_journals_by_year, 
                   PY == max(PY)),
-    aes(label = str_wrap(SO_n, 40)),
+    aes(label = str_wrap(SO_n, 80)), # is this the line break problem solved?
     size = 4,
     nudge_x = 0,
     hjust = 0,
@@ -198,7 +198,7 @@ ggplot(cran_cites_all_areas_top_journals_by_year,
     direction = "y"
   ) +
    scale_x_continuous(breaks = min_y:max_y,
-                     labels = c(min_y:2017, rep("", length(2018:max_y))),
+                     labels = c(min_y:2017rep, rep("", length(2018:max_y))),
                      limits = c(min_y, max_y)) +
 #  scale_y_continuous(labels = scales::percent) +
   xlab("Publication year") +
@@ -324,7 +324,7 @@ ggplot(archy_cran_cites_all_areas_top_journals_by_year,
   geom_text_repel(
     data = archy_cran_cites_all_areas_top_journals_by_year %>% 
       group_by(SO) %>% 
-      slice(which.max(PY)) , 
+      slice(which.max(PY)), 
     aes(label = SO_n),
     direction = "y",
     size = 5,
@@ -340,7 +340,8 @@ ggplot(archy_cran_cites_all_areas_top_journals_by_year,
                                 rep("",
                                     length(2018:max_y))),
                      limits = c(min_y, max_y)) +
-  #scale_y_continuous(labels = scales::percent,
+  scale_y_continuous(trans = "log2") + # to be able to see smaller numbers better
+    #scale_y_continuous(labels = scales::percent,
    #                  limits = c(0, 0.2)) +
   xlab("Publication year") +
   ylab("Number of Articles in journal per year")
@@ -398,8 +399,8 @@ To compare with ecology we conducted a similar bibliometric analysis for archaeo
 all_archaeology_citing_R_over_time_and_subplot <- 
 all_archaeology_citing_R_over_time  +
   annotation_custom(grob = ggplotGrob(jas_cites_r), 
-                          xmin = 2030, xmax = 2045, 
-                          ymin = 12, ymax = 17) # changed position because of numbers now instead of percentage
+                          xmin = 2030, xmax = 2050, 
+                          ymin = 1.2, ymax = 2.6) # changed position because of numbers now instead of percentage + logarithmic scale in bigger plot
 
 ggsave(plot = all_archaeology_citing_R_over_time_and_subplot, 
        filename = "all_archaeology_citing_R_over_time_and_subplot.png",
