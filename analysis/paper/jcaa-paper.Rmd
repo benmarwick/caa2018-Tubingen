@@ -9,6 +9,7 @@ output:
       fig_caption: yes
       reference_docx: "../templates/template.docx" # Insert path for the DOCX file
 bibliography: references.bib
+csl: journal-of-computer-applications-in-archaeology.csl
 abstract: "There is an argument in philosophy of science that revolutions in science are either ideas-driven or tool-driven. We explore this debate in light of recent efforts by many scientific disciplines to embrace methods to improve the reproducibility of their research. One of the most profound changes driven by this concern for reproducibility and transparency is from analysing data using tools dependent on pointing-and-clicking with a mouse in commercial software, to a new set of tools based on writing scripts in free and open source programming languages. We review bibliometric evidence for this change in the sciences generally and in archaeology in particular to test if the adoption of these new tools may be considered a revolution or some other process. We evaluate how computational approaches to improving reproducibility and transparency in archaeology are mediated and transformed by digital approaches."
 ---
 
@@ -178,7 +179,7 @@ We used the 'Cited Reference Search' function provided by the Web of Science onl
 
 Figure \@ref(fig:ecology-articles-citing-r-plot) shows the percentage of articles citing R in each of several of the top ecology journals (as defined by how often their articles are cited). We restrict the start of the observation period to 2007 for convenience. The plot shows that the percentage of articles citing R has increased from less than ten percent in all journals in the late 2000s, to more than 30% in _Ecosphere_, _Ecology and Evolution_, and _Molecular Ecology_ after 2012. We would not call this a Kuhnian paradigm shift, but it does show a substantial change in the tools of the discipline, supporting claims for a Galisonian tool-driven change in ecology similar to the changes described by @Touchon_McCoy_2016.   
 
-```{r ecology-articles-citing-r-plot, fig.cap=str_glue('Percentage of articles per year citing R in top Ecology journals ({prettyNum(articles_shown_in_plot,",")} articles out of {prettyNum(how_many_articles_in_top_journals_for_cran_cites,",")}). Data from Web of Science for 2007-2017')}
+```{r ecology-articles-citing-r-plot, fig.cap=str_glue('Number of articles per year citing R in top Ecology journals ({prettyNum(articles_shown_in_plot,",")} articles out of {prettyNum(how_many_articles_in_top_journals_for_cran_cites,",")}). Data from Web of Science for 2007-2017')}
 min_y <- 2007
 max_y <- 2025
 all_sciences_citing_R_over_time <- 
