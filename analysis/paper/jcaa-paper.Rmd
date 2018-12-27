@@ -13,6 +13,8 @@ csl: journal-of-computer-applications-in-archaeology.csl
 abstract: "There is an argument in philosophy of science that revolutions in science are either ideas-driven or tool-driven. We explore this debate in light of recent efforts by many scientific disciplines to embrace methods to improve the reproducibility of their research. One of the most profound changes driven by this concern for reproducibility and transparency is from analysing data using tools dependent on pointing-and-clicking with a mouse in commercial software, to a new set of tools based on writing scripts in free and open source programming languages. We review bibliometric evidence for this change in the sciences generally and in archaeology in particular to test if the adoption of these new tools may be considered a revolution or some other process. We evaluate how computational approaches to improving reproducibility and transparency in archaeology are mediated and transformed by digital approaches."
 ---
 
+
+
 ```{r, setup, echo = FALSE, message = FALSE, warning = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
