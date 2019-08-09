@@ -1,8 +1,8 @@
 ---
 title: "Tool-driven Revolutions in Archaeological Science"
 author:
-  - author 1
-  - author 2
+  - Sophie C. Schmidt
+  - Ben Marwick
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
     bookdown::word_document2:
@@ -73,6 +73,9 @@ We focus here on the third factor, free and open source software, because it is 
 # We did a 'Cited Reference Search' in WoS for title "R: A Language and Environment for Statistical Computing" and author = "R Core Team", which is the output from  `citation()`. This function first appeared in 2004 https://github.com/wch/r-source/commits/9a5c086855d2e8fb07f670e3315871b2de31a4fd/src/library/base/inst/CITATION
 #
 # Note that before 2012 the authors were "R Development Core Team", and then it was simplified to "R Core Team" https://github.com/wch/r-source/commit/9a5c086855d2e8fb07f670e3315871b2de31a4fd#diff-80bb8a8b133a6204e9642d76791927e2
+#
+# We select all to get 185,121 results, then refine
+
 #
 # This is our exact search string for WoS:
 
