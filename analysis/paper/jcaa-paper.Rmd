@@ -10,7 +10,7 @@ output:
       reference_docx: "../templates/template.docx" # Insert path for the DOCX file
 bibliography: references.bib
 csl: journal-of-computer-applications-in-archaeology.csl
-abstract: "There is an argument in philosophy of science that revolutions in science are either ideas-driven or tools-driven. We explore this debate in light of recent efforts by many scientific disciplines to embrace methods to improve the reproducibility of their research. One of the most profound changes driven by this concern for reproducibility and transparency is from analysing data using tools dependent on point-and-clicking with a mouse in closed source software, to a new set of tools based on writing scripts in programming languages and making them free and open source. We present bibliometric evidence for this change in the sciences generally and in archaeology in particular to test if the adoption of these new tools may be considered a revolution or some other process. We identify a citation effect for papers that use the open source programming language R. We discuss how computational approaches to improving reproducibility and transparency in archaeology are mediated and transformed by the use of R code."
+abstract: "There is an argument in philosophy of science that revolutions in science are either ideas-driven or tools-driven. We explore this debate in light of recent efforts by many scientific disciplines to embrace methods to improve the reproducibility of their research. One of the most profound changes driven by this concern for reproducibility and transparency is from analysing data using tools dependent on point-and-clicking with a mouse in closed source software, to a new set of tools based on writing scripts in open source programming languages and making them openly available. We present bibliometric evidence for this change in ecology and in archaeology to test if the adoption of these new tools may be considered a revolution or some other process. We identify a citation effect for papers that use the open source programming language R. We discuss how computational approaches to improving reproducibility and transparency in archaeology are mediated and transformed by the use of R code."
 ---
 
 
@@ -25,8 +25,6 @@ knitr::opts_chunk$set(
   comment = "#>",
   fig.path = "../figures/"
 )
-
-# library(caa2018) # Or use devtools::load_all('.', quiet = T) if your code is in script files, rather than as functions in the `/R` diretory
 
 library(ggrepel)
 library(tidyverse)
