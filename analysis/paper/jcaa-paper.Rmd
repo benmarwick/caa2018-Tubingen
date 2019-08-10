@@ -70,20 +70,38 @@ We focus here on the third factor, free and open source software, because it is 
 
 ```{r ecology-citing-r, echo=FALSE}
 
-# We did a 'Cited Reference Search' in WoS for title "R: A Language and Environment for Statistical Computing" and author = "R Core Team", which is the output from  `citation()`. This function first appeared in 2004 https://github.com/wch/r-source/commits/9a5c086855d2e8fb07f670e3315871b2de31a4fd/src/library/base/inst/CITATION
+
+# We did a 'Cited Reference Search' in WoS for author: 
+
+# "R DEV COR TEAM" OR "R # CORE" OR "R CORE TEAM" OR "R DEVELOPMENT CORE TEAM"
+
+# which is the output from  `citation()`. 
+# This function first appeared in 2004 https://github.com/wch/r-source/commits/9a5c086855d2e8fb07f670e3315871b2de31a4fd/src/library/base/inst/CITATION
 #
 # Note that before 2012 the authors were "R Development Core Team", and then it was simplified to "R Core Team" https://github.com/wch/r-source/commit/9a5c086855d2e8fb07f670e3315871b2de31a4fd#diff-80bb8a8b133a6204e9642d76791927e2
 #
-# We select all to get 185,121 results, then refine
+# we get  5,317 cited references, which are varients on how R is cited, we sort by 'citing articles', most cited at the top
+# then 'select all' to get the first 1000 matches, then 'finish search'
 
-#
-# This is our exact search string for WoS:
+# We select all to get 185,121 results, then refine...
 
-# Results: 38,040
+# Results: 47,462
 # (from Web of Science Core Collection)
 # You searched for: CITED AUTHOR: ("R DEV COR TEAM" OR "R # CORE" OR "R CORE TEAM" OR "R DEVELOPMENT CORE TEAM")
-# Refined by: DOCUMENT TYPES: ( ARTICLE ) AND LANGUAGES: ( ENGLISH ) AND RESEARCH AREAS: ( ENVIRONMENTAL SCIENCES ECOLOGY )
-# Timespan: 1900-2018. Indexes: SCI-EXPANDED, SSCI, A&HCI, # ESCI.
+# Refined by: WEB OF SCIENCE CATEGORIES: ( ECOLOGY OR ENVIRONMENTAL SCIENCES ) AND LANGUAGES: ( ENGLISH ) AND DOCUMENT TYPES: ( ARTICLE )
+# Timespan: All years. Indexes: SCI-EXPANDED, SSCI, A&HCI, ESCI.
+
+# Export to fast 5K...  tab-delimited Win
+# 0. 1-5000 x
+# 1. 5001-10000 x
+# 2. 10001-15000 x
+# 3. 15001-20000 x
+# 4. 20001-25000 x
+# 5. 25001-30000 x
+# 6. 30001-35000 x
+# 7. 35001-40000 x
+# 8. 40001-45000 x
+# 9. 45001-47538 x
 
 # field tags
 # TS= Topic
@@ -113,29 +131,32 @@ We focus here on the third factor, free and open source software, because it is 
 # UT= Accession Number
 # PMID= PubMed ID
 
-cran_cites_files <-
-    list.files(here::here("/analysis/data/raw_data/cited_cran/"),
-               full.names = TRUE)
+# ecology articles citing R
+ecology_articles_citing_r_files <-
+  list.files(here::here("/analysis/data/raw_data/post-review/ecology-articles-citing-R"),
+             full.names = TRUE)
 
-
-cran_cites_all_areas_all_years <-
-  map(cran_cites_files,
+ecology_articles_citing_r <-
+  map(ecology_articles_citing_r_files,
       ~readr::read_tsv(.x,
                        quote = "",
                        col_types = cols(.default = col_character()))) %>%
   bind_rows() %>%
   mutate(PY = as.numeric(PY)) %>%
-  filter(PY <= 2017)
+  filter(PY <= 2018)
 
 # limit to top journals
-top_journals_for_cran_cites <-
-  cran_cites_all_areas_all_years %>%
+top_ecology_journals_for_cran_cites <-
+  ecology_articles_citing_r %>%
   group_by(SO) %>%
   tally(sort = TRUE)
 
 how_many_articles_in_top_journals_for_cran_cites <-
-  sum(top_journals_for_cran_cites$n)
+  sum(top_ecology_journals_for_cran_cites$n)
 
+# this is a hand-collected spreadsheet of the total number 
+# articles published in these journals. We get these from Web
+# of Science 'publication name' search
 top_journals_for_cran_cites_articles_per_year <-
   read_csv(str_glue('{here::here()}/analysis/data/raw_data/top_journals_for_cran_cites_articles_per_year.csv')) %>%
   select(-X1) %>%
@@ -143,37 +164,39 @@ top_journals_for_cran_cites_articles_per_year <-
   separate(variable,
            into = str_glue('X{1:4}'),
            by = "_") %>%
-  select(year, X4, value)
+  select(year, X4, value) %>% 
+  mutate(year = as.integer(year)) %>% 
+  rename( "journalname" = "X4", 
+          'PY' = "year")
 
 # tally by year
-cran_cites_all_areas_top_journals_by_year <-
-  cran_cites_all_areas_all_years %>%
-  filter(SO %in% top_journals_for_cran_cites$SO[1:10]) %>%
+cran_cites_all_areas_top_ecol_journals_by_year <-
+  ecology_articles_citing_r %>%
+  filter(SO %in% top_ecology_journals_for_cran_cites$SO[1:10]) %>%
   group_by(SO, PY) %>%
   tally(sort = TRUE) %>%
   mutate(journalname = str_remove_all(SO, " |-"),
          PY = as.integer(PY)) %>%
-  left_join(top_journals_for_cran_cites_articles_per_year,
-            by = c('journalname' = 'X4',
-                   'PY' = "year")) %>%
+  left_join(top_journals_for_cran_cites_articles_per_year) %>%
   mutate(prop = n / value ) %>%
   filter(SO != 'JOURNAL OF STATISTICAL SOFTWARE') %>%
   ungroup()
 
 articles_shown_in_plot <-
-  cran_cites_all_areas_top_journals_by_year %>%
+  cran_cites_all_areas_top_ecol_journals_by_year %>%
   filter(!is.na(prop)) %>%
   summarise(sum_n = sum(n)) %>%
   pull(sum_n)
 
 # nice labels with n for plot
-cran_cites_all_areas_top_journals_by_year <-
-cran_cites_all_areas_top_journals_by_year %>%
+cran_cites_all_areas_top_ecol_journals_by_year <-
+  cran_cites_all_areas_top_ecol_journals_by_year %>%
   group_by(SO) %>%
   summarise(total_n_articles = sum(n)) %>%
   mutate(SO_n = as.character(glue('{SO} (n = {total_n_articles})'))) %>%
-  right_join(cran_cites_all_areas_top_journals_by_year,
+  right_join(cran_cites_all_areas_top_ecol_journals_by_year,
              by = "SO")
+
 ```
 
 # Methods
@@ -186,44 +209,55 @@ To enable re-use of our materials and improve reproducibility and transparency a
 
 # Results
 
-Figure \@ref(fig:ecology-articles-citing-r-plot) shows the percentage of articles citing R in each of several of the top ecology journals (as defined by how often their articles are cited). We restrict the start of the observation period to 2007 for convenience so we have a ten year study period. The plot shows that the percentage of articles citing R has increased from less than ten percent in all journals in the late 2000s, to more than 30% in _Ecosphere_, _Ecology and Evolution_, and _Molecular Ecology_ after 2012. We might not call this a Kuhnian paradigm shift, but it does show a substantial change in the tools of the discipline, supporting claims for a Galisonian tool-driven change in ecology similar to the changes described by @Touchon_McCoy_2016.   
+Figure \@ref(fig:ecology-articles-citing-r-plot) shows the percentage of articles citing R in each of several of the top ecology journals (as defined by how often their articles are cited). We restrict the start of the observation period to 2008 for convenience so we have a ten year study period. The plot shows that the percentage of articles citing R has increased from less than ten percent in all journals in the late 2000s, to more than 30% in _Ecosphere_, _Ecology and Evolution_, and _Molecular Ecology_ after 2012. We might not call this a Kuhnian paradigm shift, but it does show a substantial change in the tools of the discipline, supporting claims for a Galisonian tool-driven change in ecology similar to the changes described by @Touchon_McCoy_2016.   
 
-```{r ecology-articles-citing-r-plot, fig.cap=str_glue('Percentage of articles per year citing R in top Ecology journals ({prettyNum(articles_shown_in_plot,",")} articles out of {prettyNum(how_many_articles_in_top_journals_for_cran_cites,",")}). Data from Web of Science for 2007-2017')}
-min_y <- 2007
-max_y <- 2025
-all_sciences_citing_R_over_time <-
-ggplot(cran_cites_all_areas_top_journals_by_year,
-       aes(PY,
-           prop,
-           colour = SO)) +
+```{r ecology-articles-citing-r-plot, fig.cap=str_glue('Percentage of articles per year citing R in top Ecology journals ({prettyNum(articles_shown_in_plot,",")} articles out of {prettyNum(how_many_articles_in_top_journals_for_cran_cites,",")}). Data from Web of Science for 2008-2018')}
+
+cran_cites_all_areas_top_ecol_journals_by_year <- 
+  cran_cites_all_areas_top_ecol_journals_by_year %>% 
+  mutate(SO_n = str_wrap(SO_n, 30))
+
+min_y <- 2008
+max_y <- 2030
+eco_citing_R_over_time <-
+  ggplot(cran_cites_all_areas_top_ecol_journals_by_year,
+         aes(PY,
+             prop,
+             colour = SO)) +
   geom_line(size = 2) +
   geom_text_repel(
-    data = subset(cran_cites_all_areas_top_journals_by_year,
-                  PY == max(PY)),
-    aes(label = str_wrap(SO_n, 40)),
+    data = cran_cites_all_areas_top_ecol_journals_by_year %>% 
+                  filter(PY == max(PY)),
+    aes(label = SO_n),
+    direction = "y",
     size = 4,
-    nudge_x = 0,
-    hjust = 0,
-    segment.color = NA,
-    direction = "y"
-  ) +
-   scale_x_continuous(breaks = min_y:max_y,
-                     labels = c(min_y:2017, rep("", length(2018:max_y))),
+    nudge_x = 1,
+    hjust = 0) +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"),
+        axis.title.x = element_text(hjust = 0.125),
+        legend.position="none",
+        axis.text.x = element_text(angle = 90,
+                                   hjust = 1,
+                                   vjust = 0.5)) +
+  scale_x_continuous(breaks = min_y:2018,
                      limits = c(min_y, max_y)) +
-  scale_y_continuous(labels = scales::percent) +
+  scale_y_continuous(labels = scales::percent,
+                     limits = c(0, 0.7)) +
   xlab("Publication year") +
   ylab("Percentage of articles in that journal in that year") +
-  theme_minimal() +
-  theme(legend.position="none",
-        axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
+  lemon::coord_capped_cart(bottom='right') 
 
-ggsave(plot = all_sciences_citing_R_over_time,
-       filename = "all_sciences_citing_R_over_time.png",
+
+ggsave(plot = eco_citing_R_over_time,
+       filename = "eco_citing_R_over_time.png",
        path = str_glue('{here::here()}/analysis/figures'),
        height = 5,
-       width = 9)
+       width = 7)
 
-knitr::include_graphics(str_glue('{here::here()}/analysis/figures/all_sciences_citing_R_over_time.png'))
+knitr::include_graphics(str_glue('{here::here()}/analysis/figures/eco_citing_R_over_time.png'))
 ```
 
 ## Looking forward to a tool-driven change in Archaeology
@@ -240,7 +274,7 @@ knitr::include_graphics(str_glue('{here::here()}/analysis/figures/all_sciences_c
 #- get journals with the most number of articles
 
 archy_files <-
-    list.files(here::here("/analysis/data/raw_data/wos_archaeology/"),
+    list.files(here::here("/analysis/data/raw_data/post-review/archy-articles-in-wos"),
                full.names = TRUE)
 
 archy_all_years <-
@@ -250,7 +284,13 @@ archy_all_years <-
                        col_types = cols(.default = col_character()))) %>%
   bind_rows() %>%
   mutate(PY = as.numeric(PY)) %>%
-  filter(PY <= 2017)
+  filter(PY <= 2017) %>% 
+  mutate(SO = ifelse(SO == "ASIAN PERSPECTIVES-THE JOURNAL OF ARCHAEOLOGY FOR ASIA AND THE PACIFIC",
+                     "ASIAN PERSPECTIVES", SO)) %>% 
+  mutate(SO = ifelse(SO == "GEOARCHAEOLOGY-AN INTERNATIONAL JOURNAL",
+                     "GEOARCHAEOLOGY", SO)) %>% 
+  mutate(SO = ifelse(SO == "AZANIA-ARCHAEOLOGICAL RESEARCH IN AFRICA" ,
+                     "AZANIA", SO))
 
 # limit to top journals
 top_journals_for_archy<-
@@ -270,15 +310,34 @@ how_many_articles_in_top_archy_journals <-
 
 #-- get articles citing R that are archaeology
 
-# Results: 137
+# We did a 'Cited Reference Search' in WoS for author: 
+
+# "R DEV COR TEAM" OR "R # CORE" OR "R CORE TEAM" OR "R DEVELOPMENT CORE TEAM"
+
+# which is the output from  `citation()`. 
+# This function first appeared in 2004 https://github.com/wch/r-source/commits/9a5c086855d2e8fb07f670e3315871b2de31a4fd/src/library/base/inst/CITATION
+#
+# Note that before 2012 the authors were "R Development Core Team", and then it was simplified to "R Core Team" https://github.com/wch/r-source/commit/9a5c086855d2e8fb07f670e3315871b2de31a4fd#diff-80bb8a8b133a6204e9642d76791927e2
+#
+# we get  5,317 cited references, which are varients on how R is cited, we sort by 'citing articles', most cited at the top
+# then 'select all' to get the first 1000 matches, then 'finish search'
+
+# We select all to get 185,121 results, then refine...
+# WOS research area "Archaeology" 
+
+# Results: 
 # (from Web of Science Core Collection)
-# You searched for: CITED AUTHOR: ("R DEV COR TEAM" OR "R CORE" OR "R CORE TEAM" OR "R DEVELOPMENT CORE TEAM")
-# Refined by: WEB OF SCIENCE CATEGORIES: ( ANTHROPOLOGY ) AND WEB OF SCIENCE CATEGORIES: ( ARCHAEOLOGY )
-# Timespan: All years. Indexes: SCI-EXPANDED, SSCI, A&HCI, ESCI
+# You searched for: CITED AUTHOR: ("R DEV COR TEAM" OR "R # CORE" OR "R CORE TEAM" OR "R DEVELOPMENT CORE TEAM")
+# Refined by: LANGUAGES: ( ENGLISH ) AND DOCUMENT TYPES: ( ARTICLE ) AND RESEARCH AREAS: ( ARCHAEOLOGY )
+# Timespan: All years. Indexes: SCI-EXPANDED, SSCI, A&HCI, ESCI.
+
+# Export to fast 5K...  tab-delimited Win
+
+# Results: 262
 
 archy_cran_files <-
-      list.files(here::here("/analysis/data/raw_data/cited_cran_archaeology/"),
-               full.names = TRUE)
+  list.files(here::here("/analysis/data/raw_data/post-review/archy-articles-citing-R"),
+             full.names = TRUE)
 
 archy_cran_all_years <-
   map(archy_cran_files,
@@ -287,70 +346,81 @@ archy_cran_all_years <-
                        col_types = cols(.default = col_character()))) %>%
   bind_rows() %>%
   mutate(PY = as.numeric(PY)) %>%
-  filter(PY <= 2017)
+  filter(PY <= 2018) %>% 
+  mutate(SO = ifelse(SO == "ASIAN PERSPECTIVES-THE JOURNAL OF ARCHAEOLOGY FOR ASIA AND THE PACIFIC",
+                     "ASIAN PERSPECTIVES", SO)) %>% 
+  mutate(SO = ifelse(SO == "GEOARCHAEOLOGY-AN INTERNATIONAL JOURNAL",
+                     "GEOARCHAEOLOGY", SO)) %>% 
+  mutate(SO = ifelse(SO == "AZANIA-ARCHAEOLOGICAL RESEARCH IN AFRICA" ,
+                     "AZANIA", SO))
 
 # tally by year
 archy_cran_cites_all_areas_top_journals_by_year <-
   archy_cran_all_years %>%
-  filter(SO %in% top_journals_for_archy$SO) %>%
+  filter(SO %in% {archy_cran_all_years %>% 
+           count(SO, sort = TRUE)  %>% 
+           slice(1:25) %>% 
+           pull(SO)}
+         ) %>%
   group_by(SO, PY) %>%
   tally(sort = TRUE)  %>%
   left_join(top_journals_for_archy_per_year,
             by = c('SO', 'PY')) %>%
-   mutate(prop = n.x / n.y) %>%
-  ungroup()
+  mutate(prop = n.x / n.y) %>%
+  ungroup() %>% 
+  filter(!is.na(prop))
 
-total_number_archaeology_articles_citing_r <- sum(archy_cran_cites_all_areas_top_journals_by_year$n.x)
+total_number_archaeology_articles_citing_r <- sum(archy_cran_cites_all_areas_top_journals_by_year$n.x, na.rm = TRUE)
 
 # check for slight differences in journal names
 # sort(unique(archy_cran_cites_all_areas_top_journals_by_year$SO))
 
 # nice labels with n for plot
 archy_cran_cites_all_areas_top_journals_by_year <-
-archy_cran_cites_all_areas_top_journals_by_year %>%
+  archy_cran_cites_all_areas_top_journals_by_year %>%
   group_by(SO) %>%
   summarise(total_n_articles = sum(n.x)) %>%
   mutate(SO_n = as.character(glue('{SO} (n = {total_n_articles})'))) %>%
   right_join(archy_cran_cites_all_areas_top_journals_by_year,
              by = "SO")
 
-
-min_y <- 2007
-max_y <- 2040
+min_y <- 2008
+max_y <- 2021
+label_text_size = 2
 
 archy_cran_cites_all_areas_top_journals_by_year_to_plot <- 
- archy_cran_cites_all_areas_top_journals_by_year # %>% 
- # filter(SO != "AFRICAN ARCHAEOLOGICAL REVIEW") 
+  archy_cran_cites_all_areas_top_journals_by_year # %>% 
+# filter(SO != "AFRICAN ARCHAEOLOGICAL REVIEW") 
 
 all_archaeology_citing_R_over_time <-
   ggplot(archy_cran_cites_all_areas_top_journals_by_year_to_plot,
-       aes(PY,
-           prop,
-           colour = SO)) +
+         aes(PY,
+             prop,
+             colour = SO)) +
+  scale_x_continuous(breaks = min_y:2018,
+                     limits = c(min_y, max_y)) +
+  scale_y_continuous(limits = c(0, 0.2)) +
   geom_line(size = 2) +
   geom_point() +
   geom_text_repel(
     data = archy_cran_cites_all_areas_top_journals_by_year_to_plot %>%
       group_by(SO) %>%
-      slice(which.max(PY)) ,
+      slice(which.max(PY)) %>% 
+      mutate(SO_n = str_wrap(SO_n, 60)),
     aes(label = SO_n),
+    hjust = -1,
     direction = "y",
-    size = 6,
-    nudge_x = 1,
-    hjust = 0) +
-   theme(panel.grid.major = element_blank(), 
-         panel.grid.minor = element_blank(),
-         panel.background = element_blank(), 
-         axis.line = element_line(colour = "black"),
-         axis.title.x = element_text(hjust = 0.125),
+    size = label_text_size,
+    nudge_x = 2) +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"),
+        axis.title.x = element_text(hjust = 0.5),
         legend.position="none",
         axis.text.x = element_text(angle = 90,
                                    hjust = 1,
                                    vjust = 0.5)) +
-  scale_x_continuous(breaks = min_y:2017,
-                     limits = c(min_y, max_y)) +
-  scale_y_continuous(labels = scales::percent,
-                     limits = c(0, 0.2)) +
   xlab("Publication year") +
   ylab("Percentage of articles in that journal") +
   lemon::coord_capped_cart(bottom='right') 
@@ -359,14 +429,19 @@ ggsave(plot = all_archaeology_citing_R_over_time,
        filename = "all_archaeology_citing_R_over_time.png",
        path = str_glue('{here::here()}/analysis/figures'),
        height = 7,
-       width = 11)
+       width = 7)
 ```
+
+
 
 ```{r j-arch-sci-articles-citing-R}
 # look at the trend in JAS, where there are the most articles
 
 how_many_articles_in_jas <-  
   archy_cran_cites_all_areas_top_journals_by_year$total_n_articles[1]
+
+labels_and_breaks <- 
+  sort(unique(archy_cran_cites_all_areas_top_journals_by_year$PY))
 
 jas_cites_r <-
 archy_cran_cites_all_areas_top_journals_by_year %>%
@@ -389,35 +464,41 @@ archy_cran_cites_all_areas_top_journals_by_year %>%
                                     signif(..p.value.., digits = 4), sep = "")),
                   parse = TRUE) +
   xlab("year") +
-  ylab("Proportion of articles citing R") +
-  ggtitle(expression(paste("Articles citing R in ",
-                           italic("Journal of Archaeological Science")))) +
-  theme_bw(base_size = 10)
+  scale_x_continuous(breaks = labels_and_breaks,
+                     labels = labels_and_breaks) +
+  ylab("Proportion of articles citing R per year") +
+  theme_bw(base_size = 14) +
+  theme(axis.text.x = element_text(angle = 90,
+                                   hjust = 1,
+                                   vjust = 0.5))
+
+ggsave(plot = jas_cites_r,
+       filename = "jas_cites_r.png",
+       path = str_glue('{here::here()}/analysis/figures'),
+       height = 7,
+       width = 11)
 ```
 
 To compare with ecology we conducted a similar bibliometric analysis for archaeology journals indexed by the Web of Science service. We used the 'Cited Reference Search' to find articles citing R in the same way as above, and then refined the results to keep only those articles published during 2007-2017 that are included in the Web of Science category 'Archaeology'. This resulted in `r prettyNum(how_many_articles_in_top_archy_journals, ",")` articles, of which `r total_number_archaeology_articles_citing_r` cite R.  Figure \@ref(fig:archaeology-journals-with-subplot) shows the temporal trend of citations of R in archaeological articles. There are three interesting details revealed by this figure.
 
-```{r archaeology-journals-with-subplot, fig.cap=str_glue('Percentage of Archaeology articles per year citing R ({total_number_archaeology_articles_citing_r} out of {prettyNum(how_many_articles_in_top_archy_journals, ",")} articles in sample. Data from Web of Science for 2007-2017')}
-
+```{r archaeology-journals-with-subplot, fig.cap=str_glue('Proportion of Archaeology articles per year citing R ({total_number_archaeology_articles_citing_r} out of {prettyNum(how_many_articles_in_top_archy_journals, ",")} articles in sample. Sub-plot shows articles in the _Journal of Archaeological Science_. Data from Web of Science for 2008-2018')}
 # combine main plot and subplot
 all_archaeology_citing_R_over_time_and_subplot <-
 all_archaeology_citing_R_over_time  +
   annotation_custom(grob = ggplotGrob(jas_cites_r),
-                          xmin = 2027, xmax = 2040,
-                          ymin = 0.10, ymax = 0.20)
-
+                          xmin = 2008, xmax = 2015,
+                          ymin = 0.08, ymax = 0.20)
 ggsave(plot = all_archaeology_citing_R_over_time_and_subplot,
        filename = "all_archaeology_citing_R_over_time_and_subplot.png",
        path = str_glue('{here::here()}/analysis/figures'),
        height = 9,
        width = 12)
-
 knitr::include_graphics(str_glue('{here::here()}/analysis/figures/all_archaeology_citing_R_over_time_and_subplot.png'))
 ```
 
 The first detail we see here is that overall, the proportions and the absolute number of articles citing R in archaeology are much smaller than what we see in the ecology journals in Figure \@ref(fig:ecology-articles-citing-r-plot). Only the _Journal of Archaeological Science_ has more than 50 articles in our sample. We conclude from this observation that archaeologists have yet to adopt programming for data analysis and visualisation in the same way ecologists have.
 
-The second detail is that most archaeology journals do not show any strong increase in the percentage of article citing R over time. The ecology journals shown in Figure \@ref(fig:ecology-articles-citing-r-plot) show strong upward trends of increasing proportions of articles citing R over time, but we do not see any unambiguous trends in the archaeology articles when considered together. Indeed, in several of the other archaeological journals in our sample, the first citations of R only occurred in the last two years. The sample sizes for the archaeology journals are too small to confidently infer any trend of over time, with the exception of the _Journal of Archaeological Science_ with `r how_many_articles_in_jas` articles. The inset plot in Figure \@ref(fig:archaeology-journals-with-subplot) shows a statistical test of change over time for articles citing R in the _Journal of Archaeological Science_. With a moderate r-squared value and low p-value for the linear model, we conclude there is some evidence for an increase in citations of R over time in this journal. This may show an increasing use of R among archaeologists, especially those working at the intersection of archaeology and the natural sciences. This may hint at the start of a trend like what we see in the ecology journals of a widespread adoption of R.
+The second detail is that most archaeology journals do not show any strong increase in the percentage of article citing R over time. The ecology journals shown in Figure \@ref(fig:ecology-articles-citing-r-plot) show strong upward trends of increasing proportions of articles citing R over time, but we do not see any unambiguous trends in the archaeology articles when considered together. Indeed, in several of the other archaeological journals in our sample, the first citations of R only occurred in the last two years. The sample sizes for the archaeology journals are too small to confidently infer any trend of over time, with the exception of the _Journal of Archaeological Science_ with `r how_many_articles_in_jas` articles. Figure \@ref(fig:j-arch-sci-articles-citing-R-plot) shows a statistical test of change over time for articles citing R in the _Journal of Archaeological Science_. With a moderate r-squared value and low p-value for the linear model, we conclude there is some evidence for a non-random increase in citations of R over time in this journal. This may show an increasing use of R among archaeologists, especially those working at the intersection of archaeology and the natural sciences. This may hint at the start of a trend like what we see in the ecology journals of a widespread adoption of R.
 
 Following on from this observation about the increasing popularity of R in the _Journal of Archaeological Science_, the third detail we see in these results is the distinctive types of journals that have articles citing R. There is a focus on journals publishing scientific archaeology, especially those that focus on specialised empirical analysis. In addition to the general archaeology journals, we also see _Lithic Technology_, _Anthropozoologica_, and _International Journal of Osteology_ in the journal names, indicating that we find R used by specialists in stone artefacts and faunal remains. For more fine-grained insights into the topics that archaeologists are using R to study, we conducted a statistical analysis of the words in the titles of all the articles in our sample.
 
@@ -456,7 +537,7 @@ archy_journal_articles %>%
                       "analysis", "study", "site", "period", "past", "patterns", "investigation", "analyses", "late", "region", "based", "central", "north", "south", "east", "west", "western", "eastern", "ad", "pre", "sites", "evidence", "prehistoric", "remains", "change", "de", "identification", "northern", "southern", "valley", "implications", "valley", "history", "historical", "modern", "context", "stable", "middle", "approach", "san", "artifacts", "palaeolithic"),
          str_detect(word, "[a-z]"))
 
-frequency <-
+word_frequency <-
   tidy_cites %>%
   group_by(ID) %>%
   count(word, sort = TRUE) %>%
@@ -465,20 +546,23 @@ frequency <-
               summarise(total = n())) %>%
   mutate(freq = n/total)
 
-frequency <-
-  frequency %>%
+word_frequency <-
+  word_frequency %>%
   select(ID, word, freq) %>%
   spread(ID, freq) %>%
   arrange(no_R_cites, has_R_cites)
+
+hm_words <- prettyNum(nrow(word_frequency), big.mark  = ",")
+hm_articles <- prettyNum(nrow(archy_journal_articles), big.mark  = ",")
 
 ```
 
 We computed a comparison of word frequencies in journal article titles in the Web of Science data to get a better understanding of what topics archaeologists are writing about when they cite R. First we separated the archaeology articles into two groups, those that cite R, and those that do not. Second, we filtered to keep only words that occur in titles in both groups, and removed very common and uninformative words (e.g. 'the', 'archaeological', 'study', etc.). This resulted in `r prettyNum(nrow(frequency), ',')` words in `r prettyNum(nrow(archy_journal_articles), ",")` articles. Third, for each word found in all the titles of the journal articles in each group, we computed its proportion of the total number of words in all the titles in each group. Figure \@ref(fig:text-mining-article-titles-archaeology-plot) shows the results of this analysis. Words near the red line are used with about equal frequencies by papers citing R and by papers not citing R. Words far away from the red line are used much more by one group of articles compared to the other.
 
-```{r text-mining-article-titles-archaeology-plot, fig.cap=str_glue("Comparing the frequency of words used in titles of archaeology articles ({prettyNum(nrow(frequency), ",")} words in {prettyNum(nrow(archy_journal_articles), ",")} articles)")}
+```{r text-mining-article-titles-archaeology-plot, fig.cap=str_glue("Comparing the frequency of words used in titles of archaeology articles ({hm_words} words in {hm_articles} articles)")}
 
 archaeology_articles_word_freqs <-
-ggplot(frequency,
+ggplot(word_frequency,
        aes(no_R_cites,
            has_R_cites)) +
     geom_abline(color = "red",
@@ -514,58 +598,73 @@ Figure \@ref(fig:text-mining-article-titles-archaeology-plot) supports our obser
 
 ```{r archaeology-reproducible-articles}
 
-archy_ctv_readme <- readLines(str_glue('{here::here()}/analysis/data/raw_data/ctv-archaeology-README.md'))
+archy_ctv_readme <- readLines(str_glue('{here::here()}/analysis/data/raw_data/post-review/README.md'))
 
-journals <- c("Journal of Archaeological Method and Theory|J Archaeol Sci|Journal of Anthropological Archaeology|Journal of Archaeological Science|PLOS|Journal of Human Evolution|Asian Perspectives|Scientific Reports|PLoS ONE|The Holocene|Archaeology in Oceania|Quaternary International|Internet Archaeology|Quaternary Science Reviews|Quaternary International|Journal of Archaeological Science: Reports|Open Quaternary|Evolution and Human Behavior|PaleoAnthropology")
+# get just the articles
+archy_ctv_readme_start <- str_which(archy_ctv_readme, " Publications that include R code")
+archy_ctv_readme <- 
+  archy_ctv_readme[archy_ctv_readme_start:length(archy_ctv_readme)]
 
-top_archy_journals <-
- str_subset(archy_ctv_readme, journals)
-
-top_archy_journal_names <-
-  unlist(str_extract_all(archy_ctv_readme, journals))
-
-
-top_archy_journal_names <- ifelse(top_archy_journal_names == "J Archaeol Sci",
-                                  "Journal of Archaeological Science",
-                                  ifelse(top_archy_journal_names == "PLOS",
-                                  "PLoS ONE",
-                                  top_archy_journal_names))
-
-archy_ctv_readme <- top_archy_journals
+# get all dates of publication
 archy_ctv_readme <- str_remove_all(archy_ctv_readme, "[[:punct:]]")
 archy_ctv_readme_20XX <- str_extract(archy_ctv_readme, " 20[[:digit:]]{2} ")
 archy_ctv_readme_20XX <- str_squish(unlist(archy_ctv_readme_20XX))
 archy_ctv_readme_20XX <- as.numeric(archy_ctv_readme_20XX)
-archy_ctv_readme_20XX <- archy_ctv_readme_20XX[archy_ctv_readme_20XX > 2010]
+archy_ctv_readme_20XX <- archy_ctv_readme_20XX[!is.na(archy_ctv_readme_20XX)]
 
 number_of_reproducible_articles <- length(archy_ctv_readme_20XX)
 
-data_to_plot <- data_frame(year = archy_ctv_readme_20XX,
-                  journal_name = top_archy_journal_names) %>%
-  filter(!is.na(year),
-         year <= 2017) %>%
-  mutate(year = factor(year))
+# get a few journal names
+archy_ctv_readme_journals <- str_which(archy_ctv_readme, glue_collapse(archy_ctv_readme_20XX, "|"))
+archy_ctv_readme_journals <- archy_ctv_readme[archy_ctv_readme_journals]
+
+journals <- c("Journal of Archaeological Method and Theory|J Archaeol Sci|Journal of Anthropological Archaeology|Journal of Archaeological Science|PLOS|Journal of Human Evolution|Asian Perspectives|Scientific Reports|PLoS ONE|The Holocene|Archaeology in Oceania|Quaternary International|Internet Archaeology|Quaternary Science Reviews|Quaternary International|Journal of Archaeological Science: Reports|Open Quaternary|Evolution and Human Behavior|PaleoAnthropology|Archaeological and Anthropological Sciences")
+
+top_archy_journals <-
+  tibble( citation = archy_ctv_readme_journals, 
+          year = archy_ctv_readme_20XX) %>% 
+  mutate(journal_name = str_extract(tolower(citation), tolower(journals))) %>% 
+  mutate(journal_name = ifelse(journal_name == "j archaeol sci",
+                                  "journal of archaeological science",
+                                  ifelse(journal_name == "plos",
+                                  "plos one",
+                                  journal_name))) %>% 
+  mutate(journal_name = str_to_title(journal_name)) %>% 
+  mutate(journal_name = str_replace(journal_name, "And", "and")) %>% 
+  mutate(journal_name = str_replace(journal_name, "Of", "of")) %>% 
+  mutate(journal_name = str_replace(journal_name, "In ", "in ")) %>% 
+  mutate(journal_name = str_replace(journal_name, "Plos", "PLOS")) %>% 
+  mutate(journal_name = str_replace_na(journal_name, "Other")) %>% 
+  mutate(year = factor(year)) %>% 
+  add_count(journal_name) %>% 
+  mutate(journal_name = str_glue('{journal_name} (n = {n})'))
 ```
 
 @Touchon_McCoy_2016 identified the use of scripting languages as being a factor for easily sharing methods and code, thereby increasing the rate of development of statistical methods. One notable practice we observed during our bibliometric analysis is that among authors of articles citing R, a subset of these authors publicly share the code and data that they used to generate the results presented in their article. We identified `r number_of_reproducible_articles` articles that include R script and data files, either in the supplementary materials or in a trustworthy data repository such as Zenodo, Open Science Framework, Figshare, etc. 'Trustworthy' data repositories are those hosted by a non-commercial organisation, offering persistent identifiers, and have transparent commmitments to long term data management and backup strategies (see @marwick_standard_2018 for more details). Our continuously updated list of articles in this sample is available online here: https://github.com/benmarwick/ctv-archaeology. Figure \@ref(fig:archaeology-reproducible-articles-plot) shows that although this number is small, it is increasing, hinting at the emergence of a new approach to how archaeologists share their research. The author guidelines of this journal support this trend: "In the interests of open scholarship and the reproducibility of results, JCAA strongly encourages all authors to deposit material relating to their publication in a preservation repository" [@authorguidelines_JCAA].
 
-These archaeology articles that include publicly available R code and data are part of a shift in scientific communication that has also been observed in other fields. For example, the journal *Nature Neuroscience* requires authors 'to make the code that supports the generation of key figures in their manuscript available for review' [@Editors_2017]. Although we are not aware of attempts to quantify this change in the same way we have for archaeology, we have observed a number of recent publications that describe and recommend code sharing in statistics [@Baumer2014], genome biology [@markowetz2015five], computational biology [@Sandve2013], biostatistics [@Peng2009], computer science [@peng2011reproducible; @Mitchell2012], applied mathematics [@LeVeque2012], speech science [@Abari2012], political science [@king1995replication; @Dafoe2014], and the social sciences generally [@Miguel2014]. As part of this growing interest in using code for research we also see manifestos aimed at researchers doing any kind of quantitative work [@nosek2015promoting; @Ince2012; @Barnes2010] and articles recommending using R in undergraduate education [@Bray2014; @Eglen2009]. Much of this literature is concerned with identifying and solving problems of irreproducibility in research. These actions come from a renewed interest in basic principles of the scientific method: that once-off results should not be trusted, instead they should be reproducible by other members of the research community [@Stark_2018]. Furthermore, that an article should sufficiently describe the presented research results such that a colleague can fully understand the results and how they were obtained. Many of these authors trace problems of irreproducibility to the increased complexity of computer-based analyses, combined with the limited space to describe them in a journal article, and mouse-driven computer programs where the researcher's analytical decisions are not recorded during the research process, and thus cannot be shared with other researchers.
+These archaeology articles that include publicly available R code and data are part of a shift in scientific communication that has also been observed in other fields. For example, the journal *Nature Neuroscience* requires authors 'to make the code that supports the generation of key figures in their manuscript available for review' [@Editors_2017]. Although we are not aware of attempts to quantify this change in the same way we have for archaeology, we have observed a number of recent publications that describe and recommend code sharing in statistics [@Baumer2014], genome biology [@markowetz2015five], computational biology [@Sandve2013], hydrology [@Slater_et_al_2019], biostatistics [@Peng2009], computer science [@peng2011reproducible; @Mitchell2012], applied mathematics [@LeVeque2012], speech science [@Abari2012], political science [@king1995replication; @Dafoe2014], and the social sciences generally [@Miguel2014]. As part of this growing interest in using code for research we also see manifestos aimed at researchers doing any kind of quantitative work [@nosek2015promoting; @Ince2012; @Barnes2010] and articles recommending using R in undergraduate education [@Bray2014; @Eglen2009]. Much of this literature is concerned with identifying and solving problems of irreproducibility in research. These actions come from a renewed interest in basic principles of the scientific method: that once-off results should not be trusted, instead they should be reproducible by other members of the research community [@Stark_2018]. Furthermore, that an article should sufficiently describe the presented research results such that a colleague can fully understand the results and how they were obtained. Many of these authors trace problems of irreproducibility to the increased complexity of computer-based analyses, combined with the limited space to describe them in a journal article, and mouse-driven computer programs where the researcher's analytical decisions are not recorded during the research process, and thus cannot be shared with other researchers.
 
 In our view, merely using R (or similar open source programming languages) to conduct research would not constitute a tool-driven revolution by itself, but publicly sharing the code used for research, as a solution to problems of irreproducibility, is more likely to lead to revolutionary change. We expect that openly shared code will speed the widespread adoption of reproducibility as a core tenet of the scientific process, since it frees researchers from the black box that most mouse-driven programs are, and enables researchers to not only rerun the shared analysis, but to gain access to all parameter settings, empowering them to change these and so properly evaluate, extend and reuse the published results. As open source languages such as R (and Python) are free to use, and most trustworthy repositories are also free (such as Zenodo, Open Science Framework, Figshare, etc.), then even researchers with limited resources anywhere in the world can contribute equally to the research community by using and sharing code. Using and sharing open source code is thus an important action for reducing inequality in the archaeological research community. It enables participation by researchers who are unable to buy software licenses or access face-to-face training.
 
-```{r archaeology-reproducible-articles-plot, fig.cap=str_glue('Articles in archaeology journals using R for reproducible research (n = {number_of_reproducible_articles})')}
+```{r archaeology-reproducible-articles-plot, fig.cap=str_glue('Articles in archaeology journals using R for reproducible research, and making code files openly available to accompany the published article (n = {number_of_reproducible_articles})')}
 
 archaeology_articles_r_reproducible <-
-ggplot(data_to_plot,
+ggplot(top_archy_journals,
        aes(year,
            fill = journal_name)) +
   geom_bar(position = "stack") +
-  scale_y_continuous(breaks = 1:10) +
+  scale_y_continuous(breaks = 1:30) +
   scale_fill_discrete(name = "Journal")  +
   xlab("Year of publication") +
   ylab("Number of articles") +
-  theme_minimal(base_size = 18) +
-  theme(legend.text=element_text(size=16))
+  theme_bw(base_size = 14) +
+  theme(legend.text=element_text(size=14),
+        axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
+        legend.justification = c(0, 1), 
+        legend.position = c(0.05, 0.98),
+        legend.spacing.y = unit(0.65, 'cm'),
+        legend.key.size = unit(0.65, "cm"))
+
 
 ggsave(plot = archaeology_articles_r_reproducible,
        filename = "archaeology_articles_r_reproducible.png",
@@ -600,15 +699,18 @@ archy_journal_articles %>%
                      "Cites R", "Doesn't cite R")) %>%
   group_by(ID, PY) %>%
   summarise(median = median(TC)) %>%
-  filter(PY >= 2010)
+  filter(PY >= 2010) %>% 
+  filter(PY < 2018) 
+  
 
 archy_journal_articles_n <- 
 archy_journal_articles %>%
   mutate(TC = as.numeric(TC),
          ID = ifelse(ID == "has_R_cites",
                      "Cites R", "Doesn't cite R")) %>%
+  select(ID, PY, TC) %>% 
   filter(PY >= 2010) %>% 
-  select(ID, PY, TC) 
+  filter(PY < 2018) 
   
 # compute t-test
 archy_journal_articles_citations_t_test <- 
@@ -625,35 +727,36 @@ dd <- archy_journal_articles_n %>%
 dd_cites_mean <- dd %>% filter(ID == "Cites R") %>%  pull(mean) %>% round(1)
 dd_no_cites_mean <- dd %>% filter(ID == "Doesn't cite R") %>%  pull(mean) %>% round(1) 
 test_explanation <- 
-str_glue("On average, articles citing R \nhave significantly higher numbers\nof citations (m = {dd_cites_mean}) than articles\nthat do not (m =  {dd_no_cites_mean})\nt({df}) = {tvalue}, p =  {pvalue}")
+str_glue("On average, articles citing R have higher numbers of citations (m = {dd_cites_mean}) than articles that do not (m =  {dd_no_cites_mean}) t({df}) = {tvalue}, p =  {pvalue}")
 
 archy_journal_articles_citations_plot <- 
   ggplot(archy_journal_articles_citations,
          aes(ID,
-             median)) +
+             median, 
+             fill = ID)) +
   geom_col() +
+  scale_fill_manual(values  =c("green", "red"),
+                    guide = FALSE) +
   facet_wrap( ~ PY) +
   theme_minimal(base_size = 16) +
   ylab("Median number of citations") +
   xlab("")
+
+ggsave(plot = archy_journal_articles_citations_plot,
+       filename = "archy_journal_articles_citations_plot.png",
+       path = str_glue('{here::here()}/analysis/figures'),
+       height = 9,
+       width = 16)
+
 ```
 
 ```{r results='hide'}
-# add text to empty corner
-png(here::here("analysis", "figures", "archy_journal_articles_citations_plot_cap.png"),
-    width = 20, height = 15, units = "cm", res = 300)
-print(archy_journal_articles_citations_plot)
-library(grid)
-grid.text(test_explanation, 
-          x = 0.70, y = 0.25, 
-          gp=gpar(fontsize=11),
-          just = 'left')
-invisible(dev.off())
+
 ```
 
 
-```{r  citation-advantage-plot, fig.cap=str_glue('Median citation rates per year for archaeology articles 2010-2017 that cite R (n = {prettyNum(archy_journal_articles_tally[1], ",")}) and articles that do not cite R (n = {prettyNum(archy_journal_articles_tally[2], ",")})')}
-knitr::include_graphics(here::here("analysis", "figures", "archy_journal_articles_citations_plot_cap.png"))
+```{r  citation-advantage-plot, fig.cap=str_glue('Median citation rates per year for archaeology articles 2010-2017 that cite R (n = {prettyNum(archy_journal_articles_tally[1], ",")}) and articles that do not cite R (n = {prettyNum(archy_journal_articles_tally[2], ",")}). {test_explanation}.')}
+knitr::include_graphics(here::here("analysis", "figures", "archy_journal_articles_citations_plot.png"))
 ```
 
 # Discussion 
