@@ -9,7 +9,7 @@ output:
       fig_caption: yes
       reference_docx: "../templates/template.docx" # Insert path for the DOCX file
 bibliography: references.bib
-csl: harvard-european-archaeology.csl
+csl: ../templates/harvard-european-archaeology.csl
 abstract: "*Abstract* \n There is an argument in philosophy of science that revolutions in science are either idea-driven or tool-driven. We explore this debate in light of recent efforts by many scientific disciplines to embrace methods to improve the reproducibility of their research. One of the most profound changes driven by this concern for reproducibility and transparency is from analysing data using tools dependent on point-and-clicking with a mouse in closed source software, to tools based on writing scripts in open source programming languages and making them openly available. We present bibliometric evidence for this change in ecology and in archaeology to test if the adoption of these new tools is revolutionary or transformational. We identify a positive citation effect for papers that use the open source programming language R. We discuss how computational approaches to improving reproducibility and transparency in archaeology are mediated and transformed by the use of R code."
 keywords: philosophy of science, reproducibility, programming language R, computational archaeology, open science
 ---
@@ -54,7 +54,7 @@ Masterman [-@masterman1970does] has documented 21 different uses of 'paradigm' b
 
 We see a compelling exploration of this third concrete sense of a paradigm in the work of @Galison_1997, who has offered a tool-driven view of change in research communities. Galison analysed the role of tools in twentieth century particle physics, starting with hand-crafted cloud chambers and bubble chambers and ending with digital counters, particle accelerators, and computers. He identifies a profound change in physics when analog devices producing pictures were superseded by digital devices producing numerical data. At the heart of this change is a shift from an intuitive approach, stimulated by visual and pictorial model-building to an approach based on logic, calculation, and demonstration. The changes are not purely at the points of data collection and analysis, but extend to the social and economic organisation of science, with new categories of physicists emerging, people who are not entirely experimenters and not entirely theorists. Dyson [-@Dyson_2000; -@dyson2012science] has further explored this tool-driven approach, tracing the origin of the Galilean revolution to appearance of the telescope in astronomy, and the origin of the Crick-Watson revolution to the use of X-ray diffraction.
 
-We propose that Galison's emphasis on tool-driven change, as a complement to Kuhnian concept-driven change, has potential to enhance archaeology's social and scientific relevance and contributions. The centrality of material culture in Galison's view raises the question about whether there is scope for archaeologists to make productive contributions to understanding change in the history of science through an archaeological analysis of scientific instrumentation [cf. @Schiffer_2013]. Furthermore, Galison's analysis of the image/logic contrast in the history of physics invites a similar analysis of the history of archaeology. Can we identify archaeological traditions focused on data collection and analysis using images and image-making devices [cf. @molyneaux2013cultural], in contrast to digital devices? One candidate for this might be the shift from building relative chronologies based on seriation using typologies of visually distinctive artefacts to absolute chronologies based on radiometric dating using computer-controlled instruments. Three revolutions in archaeology have been attributed to radiocarbon dating and associated technologies [@bayliss2009rolling]. @chase2012geospatial have claimed the introduction of radiocarbon dating was a paradigm shift in archaeology, but we are not aware of a Galisonian analysis of this change. A third issue is how we can use a tool-driven approach not just as a framework for understanding change in science, but as a method to predict or generate change in the practice of archaeology?
+We propose that Galison's emphasis on tool-driven change, as a complement to Kuhnian concept-driven change, has potential to enhance archaeology's social and scientific relevance and contributions. The centrality of material culture in Galison's view raises the question about whether there is scope for archaeologists to make productive contributions to understanding change in the history of science through an archaeological analysis of scientific instrumentation [cf. @Schiffer_2013]. Furthermore, Galison's analysis of the image/logic contrast in the history of physics invites a similar analysis of the history of archaeology. Can we identify archaeological traditions focused on data collection and analysis using images and image-making devices [cf. @molyneaux2013cultural], in contrast to digital devices [@marwick_2019]? One candidate for this might be the shift from building relative chronologies based on seriation using typologies of visually distinctive artefacts to absolute chronologies based on radiometric dating using computer-controlled instruments. Three revolutions in archaeology have been attributed to radiocarbon dating and associated technologies [@bayliss2009rolling]. @chase2012geospatial have claimed the introduction of radiocarbon dating was a paradigm shift in archaeology, but we are not aware of a Galisonian analysis of this change. A third issue is how we can use a tool-driven approach not just as a framework for understanding change in science, but as a method to predict or generate change in the practice of archaeology?
 
 # 3. Bibliometric Analysis of a Tool-driven Change
 
@@ -224,6 +224,7 @@ eco_citing_R_over_time <-
          aes(PY,
              prop,
              colour = SO)) +
+   scale_color_viridis_d(option = "D") +
   geom_line(size = 2) +
   geom_text_repel(
     data = cran_cites_all_areas_top_ecol_journals_by_year %>% 
@@ -396,6 +397,7 @@ all_archaeology_citing_R_over_time <-
          aes(PY,
              prop,
              colour = SO)) +
+  scale_color_viridis_d(option = "A") +
   scale_x_continuous(breaks = min_y:2018,
                      limits = c(min_y, max_y)) +
   scale_y_continuous(limits = c(0, 0.2)) +
@@ -655,7 +657,7 @@ ggplot(top_archy_journals,
            fill = journal_name)) +
   geom_bar(position = "stack") +
   scale_y_continuous(breaks = 1:30) +
-  scale_fill_discrete(name = "Journal")  +
+  scale_fill_viridis_d(name = "Journal")  +
   xlab("Year of publication") +
   ylab("Number of articles") +
   theme_bw(base_size = 14) +
@@ -736,7 +738,7 @@ archy_journal_articles_citations_plot <-
              median, 
              fill = ID)) +
   geom_col() +
-  scale_fill_manual(values  =c("green", "red"),
+  scale_fill_viridis_d(
                     guide = FALSE) +
   facet_wrap( ~ PY) +
   theme_minimal(base_size = 16) +
