@@ -163,7 +163,7 @@ top_journals_for_cran_cites_articles_per_year <-
   gather(variable, value, -year) %>%
   separate(variable,
            into = str_glue('X{1:4}'),
-           by = "_") %>%
+           sep = "_") %>%
   select(year, X4, value) %>% 
   mutate(year = as.integer(year)) %>% 
   rename( "journalname" = "X4", 
