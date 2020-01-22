@@ -389,7 +389,9 @@ max_y <- 2021
 label_text_size = 4
 
 archy_cran_cites_all_areas_top_journals_by_year_to_plot <- 
-  archy_cran_cites_all_areas_top_journals_by_year # %>% 
+  archy_cran_cites_all_areas_top_journals_by_year %>%
+  filter(total_n_articles > 5)
+# %>% 
 # filter(SO != "AFRICAN ARCHAEOLOGICAL REVIEW") 
 
 all_archaeology_citing_R_over_time <-
@@ -397,7 +399,7 @@ all_archaeology_citing_R_over_time <-
          aes(PY,
              prop,
              colour = SO)) +
-  scale_color_viridis_d(option = "A") +
+  scale_color_viridis_d(option = "D") +
   scale_x_continuous(breaks = min_y:2018,
                      limits = c(min_y, max_y)) +
   scale_y_continuous(limits = c(0, 0.2)) +
